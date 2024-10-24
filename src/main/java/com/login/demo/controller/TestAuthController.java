@@ -1,4 +1,4 @@
-package com.login.demo.Controller;
+package com.login.demo.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +15,7 @@ public class TestAuthController {
         return "Hello, World!";
     }
 
-    @GetMapping("/auth/hello-secured2")
+    @GetMapping("/hello-secured2")
     @PreAuthorize("hasAuthority('CREATE')")
     public String helloSecured2() {
         return "Hello, Secured World2!";

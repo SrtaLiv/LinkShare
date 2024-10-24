@@ -34,56 +34,71 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth").permitAll() // Ruta pública
-                        .anyRequest().authenticated() // Rutas privadas
-                )
-                .formLogin(withDefaults()) // Habilitar inicio de sesión basado en formularios
-                .httpBasic(withDefaults()); // Habilitar autenticación HTTP básica
 
-        return http.build();
-    }
-    /*
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.
-                csrf(crsf -> crsf.disable())
+        return httpSecurity
+                .csrf(csrf -> csrf.disable())
+                .httpBasic(Customizer.withDefaults()) //se usa cuando solo vas a logear con usuarios y contraseñas
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .build();
-    }*/
+                .authorizeHttpRequests(http -> {
 
-    /*
+                    http.requestMatchers(HttpMethod.GET, "/auth/**").authenticated();
+                    //http.requestMatchers(HttpMethod.GET, "/hello-secured2").hasAuthority("READ");
+                    //http.anyRequest().denyAll();
+               })
+                .build();
+    }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    //creamos authentication provider
+    //Agregamos el user Details Service como parámetro
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailService());
         provider.setPasswordEncoder(passwordEncoder());
+        //sacamos el anterior, el lógico y agregamos el nuevo
+        //  provider.setUserDetailsService(userDetailsService());
+        provider.setUserDetailsService(userDetailsService);
+
+
         return provider;
     }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public UserDetailsService userDetailService(){
-        List<UserDetails> userDetailsList = new ArrayList<>();
 
-        User.withUsername("raul")
-                .password("1234")
+    /* PARA PRUEBAS
+    @Bean
+    public UserDetailsService userDetailsService () {
+        List userDetailsList = new ArrayList<>();
+
+        userDetailsList.add(User.withUsername("santi")
+                .password("1234") // esto si no está codificado, sino, tiene que seguir el algoritmo de codificación
                 .roles("ADMIN")
-                .authorities("READ", "CREATE", "ADMIN")
-                .build();
+                .authorities("CREATE", "READ", "UPDATE", "DELETE")
+                .build());
+
+        userDetailsList.add(User.withUsername("oli")
+                .password("1234") // esto si no está codificado, sino, tiene que seguir el algoritmo de codificación
+                .roles("USER")
+                .authorities("READ")
+                .build());
+
+        userDetailsList.add(User.withUsername("mindi")
+                .password("1234") // esto si no está codificado, sino, tiene que seguir el algoritmo de codificación
+                .roles("USER")
+                .authorities("UPDATE")
+                .build());
 
         return new InMemoryUserDetailsManager(userDetailsList);
     }*/
+
 }
