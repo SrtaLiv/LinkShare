@@ -41,12 +41,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(Customizer.withDefaults()) //se usa cuando solo vas a logear con usuarios y contraseñas
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(http -> {
-
+               /* .authorizeHttpRequests(http -> {
                     http.requestMatchers(HttpMethod.GET, "/auth/**").authenticated();
-                    //http.requestMatchers(HttpMethod.GET, "/hello-secured2").hasAuthority("READ");
+                    http.requestMatchers(HttpMethod.GET, "/hello-secured2").hasAuthority("READ"); //en base a permiso
+                    http.requestMatchers(HttpMethod.GET, "/auth/hello-admin").hasAnyRole("ADMIN"); //en base a roles
                     //http.anyRequest().denyAll();
-               })
+               })*/
                 .build();
     }
 
@@ -61,11 +61,7 @@ public class SecurityConfig {
     public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder());
-        //sacamos el anterior, el lógico y agregamos el nuevo
-        //  provider.setUserDetailsService(userDetailsService());
         provider.setUserDetailsService(userDetailsService);
-
-
         return provider;
     }
 

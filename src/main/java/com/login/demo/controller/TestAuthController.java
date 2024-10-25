@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-//@PreAuthorize("denyAll()")
+@PreAuthorize("denyAll()")
 //@RequestMapping("/auth")
 public class TestAuthController {
 
@@ -21,8 +21,9 @@ public class TestAuthController {
         return "Hello, Secured World2!";
     }
 
-    @GetMapping("/auth/hello-secured")
+    @GetMapping("/auth/hello-admin")
+    @PreAuthorize("hasRole('ADMIN')")
     public String helloSecured() {
-        return "Hello, Secured World!";
+        return "Hello, solo admins!";
     }
 }

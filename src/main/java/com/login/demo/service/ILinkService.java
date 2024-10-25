@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ILinkService {
-    public List findAll();
-    public Optional findById(Long id);
-    public Link save(Link link);
-    public void deleteById(Long id);
-    public void update(Link link);
+    List<Link> findAll();
+    Optional<Link> findById(Long id);
+    Link save(Link link);
+    void deleteById(Long id);
+    void update(Link link);
 
 }
