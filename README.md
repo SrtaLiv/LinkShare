@@ -13,11 +13,9 @@ server.port=8081
 
 ## Post
 ### Post Permisos
-```json
 http://localhost:8081/api/permissions 
-```
 
-```json
+```link
 {
     "permissionName": "CREATE"
 }
@@ -42,9 +40,7 @@ http://localhost:8081/api/roles
 ```
 
 ### Post Users
-```json
 http://localhost:8081/api/users
-```
 
 ```json
 {
@@ -64,7 +60,6 @@ http://localhost:8081/api/users
 
 ### Post Links
 http://localhost:8081/api/links/
-```
 ```json
 {
     "id_user": 1,                    
@@ -74,29 +69,19 @@ http://localhost:8081/api/links/
 ```
 ## Get
 ### Get Permisos
-```json
 http://localhost:8081/api/links
-```
 
 ### Get Links
-```json
 http://localhost:8081/api/links
-```
 
 ### Get Users/{id}
-```json
 http://localhost:8081/api/users/1
-```
 
 ### Get Users
-```json
 http://localhost:8081/api/users
-```
 
 ### Get Roles
-```json
 http://localhost:8081/api/roles
-```
 
 ## Put, Rutas publicas y/o privadas
 Para hacer
