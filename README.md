@@ -7,7 +7,7 @@ Respetar orden de creacion por sus relaciones
 
 http://localhost:8081/
 El server corre en el puerto 8081. En caso de querer cambiarlo puedes ir a src/main/resources/application.properties y cambiarlo.
-```java
+```
 server.port=8081
 ```
 
