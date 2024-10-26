@@ -22,7 +22,7 @@ public class LinkController {
     @Autowired
     private IUserSecService userSecService;
 
-    @PostMapping("/new")
+    @PostMapping()
     public ResponseEntity<Link> createLink(@RequestBody LinkUserDTO linkUserDTO) {
 
         if (linkUserDTO.getId_user() == null) {
