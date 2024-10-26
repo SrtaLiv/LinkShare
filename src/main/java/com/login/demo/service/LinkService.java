@@ -1,8 +1,6 @@
 package com.login.demo.service;
 
-import com.login.demo.dto.LinkUserDTO;
 import com.login.demo.models.Link;
-import com.login.demo.models.UserSec;
 import com.login.demo.repository.ILinkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +19,7 @@ public class LinkService implements ILinkService {
 
     @Override
     public Optional<Link> findById(Long id) {
-        return Optional.empty();
+        return linkRepository.findById(id);
     }
 
     @Override
