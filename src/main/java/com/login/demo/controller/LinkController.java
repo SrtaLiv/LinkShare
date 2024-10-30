@@ -56,7 +56,7 @@ public class LinkController {
         return ResponseEntity.ok(updatedLink);
     }
 
-    @DeleteMapping()
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLink(@PathVariable Long id) {
         linkService.deleteById(id);
         return ResponseEntity.noContent().build();
