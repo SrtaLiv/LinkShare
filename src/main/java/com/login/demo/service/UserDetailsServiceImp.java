@@ -90,7 +90,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
 
         RegisterUserDTO registerUserDto = new RegisterUserDTO(username, password);
         UserSec user = new UserSec();
-        user.setUsername(username);
+        user.setEmail(username);
         user.setPassword(password);
 
         return userRepo.save(user);

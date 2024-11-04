@@ -24,9 +24,6 @@ public class UserSec implements UserDetails {
     @Column(nullable = false)
     private Long id;
 
-    @Column(unique = true)
-    private String username;
-
     @Column(unique = true, length = 100, nullable = false)
     private String email;
 
@@ -51,6 +48,11 @@ public class UserSec implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
+    }
+
+    @Override
+    public String getUsername() {
+        return "no tiene username";
     }
 
     @Override

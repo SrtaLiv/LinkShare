@@ -24,4 +24,5 @@ public class Link {
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private UserSec usuario;
+
 }
