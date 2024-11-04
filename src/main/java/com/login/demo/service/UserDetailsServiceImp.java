@@ -3,6 +3,8 @@ package com.login.demo.service;
 
 import com.login.demo.dto.AuthLoginRequestDTO;
 import com.login.demo.dto.AuthResponseDTO;
+import com.login.demo.dto.RegisterUserDTO;
+import com.login.demo.models.Role;
 import com.login.demo.models.UserSec;
 import com.login.demo.repository.IUserRepository;
 import com.login.demo.utils.JwtUtils;
@@ -20,9 +22,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
+//authentication service
 public class UserDetailsServiceImp implements UserDetailsService {
 
     @Autowired
@@ -34,31 +39,25 @@ public class UserDetailsServiceImp implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Override
-    public UserDetails loadUserByUsername (String username) throws UsernameNotFoundException {
+
+    public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
 
         //tenemos User sec y necesitamos devolver UserDetails
         //tra el usuario de la bd
-        UserSec userSec = userRepo.findUserEntityByUsername(username)
-                .orElseThrow(()-> new UsernameNotFoundException("El usuario " + username + "no fue encontrado"));
+        UserSec userSec = userRepo.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("El email " + email + "no fue encontrado"));
+
+        if (userSec.getEmail() == null || userSec.getEmail().isEmpty() ||
+                userSec.getPassword() == null || userSec.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("Email o password no pueden ser nulos o vacíos");
+        }
 
         //con GrantedAuthority Spring Security maneja permisos pq necesitamos la lista de permisos
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
 
-        //Programación funcional a full
-        //tomamos roles y los convertimos en SimpleGrantedAuthority para poder agregarlos a la authorityList
-        //_role para que Spring lo diferencie de los permisos!
-        userSec.getRolesList()
-                .forEach(role -> authorityList.add(new SimpleGrantedAuthority("ROLE_".concat(role.getRole()))));
-
-
-        //ahora tenemos que agregar los permisos
-        userSec.getRolesList().stream()
-                .flatMap(role -> role.getPermissionsList().stream()) //acá recorro los permisos de los roles
-                .forEach(permission -> authorityList.add(new SimpleGrantedAuthority(permission.getPermissionName())));
 
         //retornamos el usuario de Spring Security con los datos de nuestro UserSec
-        return new User(userSec.getUsername(),
+        return new User(userSec.getEmail(),
                 userSec.getPassword(),
                 userSec.isEnabled(),
                 userSec.isAccountNotExpired(),
@@ -67,33 +66,55 @@ public class UserDetailsServiceImp implements UserDetailsService {
                 authorityList);
     }
 
-    public AuthResponseDTO loginUser (AuthLoginRequestDTO authLoginRequest){
-
-        //recuperamos nombre de usuario y contraseña
-        String username = authLoginRequest.username();
+    public AuthResponseDTO loginUser(AuthLoginRequestDTO authLoginRequest) {
+        // Validate email and password are not null or empty
+        String email = authLoginRequest.email();
         String password = authLoginRequest.password();
 
-        Authentication authentication = this.authenticate (username, password);
-        //si todo sale bien
+        if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
+            throw new IllegalArgumentException("Email and password cannot be null or empty");
+        }
+
+        Authentication authentication = this.authenticate(email, password);
+        // If successful, set authentication and generate token
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String accessToken = jwtUtils.createToken(authentication);
-        AuthResponseDTO authResponseDTO = new AuthResponseDTO(username, "login ok", accessToken, true);
-        return authResponseDTO;
-
+        return new AuthResponseDTO(email, "Login successful", accessToken, true);
     }
 
-    public Authentication authenticate (String username, String password) {
-        //con esto debo buscar el usuario
-        UserDetails userDetails = this.loadUserByUsername(username);
 
-        if (userDetails==null) {
-            throw new BadCredentialsException("Invalid username or password");
+    public UserSec signup(RegisterUserDTO input) {
+
+        String username = input.email();
+        String password = input.password();
+
+        RegisterUserDTO registerUserDto = new RegisterUserDTO(username, password);
+        UserSec user = new UserSec();
+        user.setUsername(username);
+        user.setPassword(password);
+
+        return userRepo.save(user);
+    }
+
+
+    public Authentication authenticate(String email, String password) {
+        if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
+            throw new IllegalArgumentException("Email and password cannot be null or empty");
         }
-        // si no es igual
+
+        UserDetails userDetails = this.loadUserByEmail(email);
+
+        // Verify password
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-            throw new BadCredentialsException("Invalid password");
+            throw new BadCredentialsException("Invalid email or password");
         }
-        return new UsernamePasswordAuthenticationToken(username, userDetails.getPassword(), userDetails.getAuthorities());
+
+        return new UsernamePasswordAuthenticationToken(email, userDetails.getPassword(), userDetails.getAuthorities());
     }
 
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return loadUserByEmail(username);
+    }
 }

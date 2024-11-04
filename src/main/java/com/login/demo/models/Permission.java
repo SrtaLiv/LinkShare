@@ -19,4 +19,9 @@ public class Permission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String permissionName;
+
+    public Permission(String name) {
+        this.id = getId();
+        this.permissionName = name;
+    }
 }

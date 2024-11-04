@@ -41,4 +41,5 @@ public class RoleService implements IRoleService {
     public Role update(Role role) {
         return roleRepository.save(role);
     }
+
 }

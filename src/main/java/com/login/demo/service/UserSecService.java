@@ -3,6 +3,7 @@ package com.login.demo.service;
 import com.login.demo.models.UserSec;
 import com.login.demo.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,7 @@ public class UserSecService implements IUserSecService {
 
     @Override
     public UserSec save(UserSec userSec) {
+
         return userRepository.save(userSec);
     }
 
@@ -45,4 +47,10 @@ public class UserSecService implements IUserSecService {
     public String encriptPassword(String password) {
         return new BCryptPasswordEncoder().encode(password);
     }
+
+    public Optional<UserSec> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+
 }
