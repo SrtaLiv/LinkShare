@@ -10,9 +10,6 @@ import java.util.Optional;
 @Repository
 public interface IUserRepository extends JpaRepository<UserSec, Long> {
 
-    //Crea la sentencia en base al nombre en inglés del método
-    //Tmb se puede hacer mediante Query pero en este caso no es necesario
-    Optional<UserSec> findUserEntityByUsername(String username);
-
+    Optional<UserSec> findByEmail(String email);
 
 }

@@ -12,9 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -76,6 +74,16 @@ public class JwtUtils {
     public String extractUsername (DecodedJWT decodedJWT) {
         return decodedJWT.getSubject().toString();
     }
+
+    //Extracción de Roles y Permisos
+    public Set<String> extractRoles(DecodedJWT decodedJWT) {
+        return new HashSet<>(decodedJWT.getClaim("roles").asList(String.class));
+    }
+
+    public Set<String> extractPermissions(DecodedJWT decodedJWT) {
+        return new HashSet<>(decodedJWT.getClaim("permissions").asList(String.class));
+    }
+
 
     //devuelvo un claim en particular
     public Claim getSpecificClaim (DecodedJWT decodedJWT, String claimName) {
