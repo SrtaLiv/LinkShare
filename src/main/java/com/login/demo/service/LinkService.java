@@ -1,5 +1,6 @@
 package com.login.demo.service;
 
+import com.login.demo.dto.LinkDTO;
 import com.login.demo.models.Link;
 import com.login.demo.repository.ILinkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import java.util.Optional;
 public class LinkService implements ILinkService {
     @Autowired
     private ILinkRepository linkRepository;
+
     @Override
 
     public List<Link> findAll() {
@@ -36,4 +38,5 @@ public class LinkService implements ILinkService {
     public void update(Link link) {
         linkRepository.save(link);
     }
+
 }

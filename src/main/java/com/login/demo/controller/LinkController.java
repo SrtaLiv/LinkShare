@@ -5,14 +5,11 @@ import com.login.demo.models.Link;
 import com.login.demo.models.UserSec;
 import com.login.demo.service.ILinkService;
 
-import com.login.demo.service.IUserSecService;
-import com.login.demo.service.UserDetailsServiceImp;
 import com.login.demo.service.UserSecService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,11 +37,11 @@ public class LinkController {
     }
 
     @PostMapping()
-    public ResponseEntity<Link> createLink(@RequestBody LinkDTO linkDTO) {
+    public ResponseEntity<LinkDTO> createLink(@RequestBody LinkDTO linkDTO) {
 
         // Obtener el usuario autenticado
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName(); // Suponiendo que estás usando el nombre de usuario para autenticar
+        String email = authentication.getName();
 
         // Obtener el usuario de la base de datos usando email
         UserSec user = userService.findByEmail(email)
@@ -55,8 +52,11 @@ public class LinkController {
         newLink.setPlatform(linkDTO.getPlatform());
         newLink.setUsuario(user);
 
-            Link savedLink = linkService.save(newLink);
-            return  ResponseEntity.ok(savedLink);
+        Link savedLink = linkService.save(newLink);
+
+        LinkDTO responseDto = new LinkDTO(savedLink.getLink(), savedLink.getPlatform(), user.getId());
+
+        return  ResponseEntity.ok(responseDto);
     }
 
     @PutMapping("/{id}")
