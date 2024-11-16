@@ -8,6 +8,7 @@ import com.login.demo.service.ILinkService;
 import com.login.demo.service.UserSecService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +32,13 @@ public class LinkController {
     }
 
     @GetMapping()
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<List<Link>> findAllLinks(){
         List<Link> linkList = linkService.findAll();
         return ResponseEntity.ok(linkList);
     }
 
-    @PostMapping()
+   /* @PostMapping()
     public ResponseEntity<LinkDTO> createLink(@RequestBody LinkDTO linkDTO) {
 
         // Obtener el usuario autenticado
@@ -57,7 +59,7 @@ public class LinkController {
         LinkDTO responseDto = new LinkDTO(savedLink.getLink(), savedLink.getPlatform(), user.getId());
 
         return  ResponseEntity.ok(responseDto);
-    }
+    }*/
 
     @PutMapping("/{id}")
     public ResponseEntity<Link> updateLink(@PathVariable Long id, @RequestBody LinkDTO linkDTO) {
