@@ -8,21 +8,15 @@ import org.springframework.web.bind.annotation.RestController;
 @PreAuthorize("denyAll()")
 public class TestAuthController {
 
-    @GetMapping("/auth/hello")
-    @PreAuthorize("permitAll()")
-    public String hello() {
-        return "Hello, World!";
-    }
+        @GetMapping("/sayhi")
+        @PreAuthorize("permitAll()")
+        public String sayHi(){
+            return "Hi! This endpoint is not secured";
+        }
 
-    @GetMapping("/hello-secured2")
-    @PreAuthorize("hasAuthority('CREATE')")
-    public String helloSecured2() {
-        return "Hello, Secured World2!";
-    }
-
-    @GetMapping("/auth/hello-admin")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String helloSecured() {
-        return "Hello, solo admins!";
-    }
+        @GetMapping("/sayhisec")
+        @PreAuthorize("isAuthenticated()")
+        public String sayHiSec(){
+            return "Hi! This endpoint has been secured";
+        }
 }
