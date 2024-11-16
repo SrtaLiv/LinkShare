@@ -48,9 +48,11 @@ public class UserSecService implements IUserSecService {
         return new BCryptPasswordEncoder().encode(password);
     }
 
-    public Optional<UserSec> findByEmail(String email) {
+   /* public Optional<UserSec> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+   
+    */
 
 
 }

@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 /*Cuando una clase se declara como un registro, el compilador de Java genera automáticamente
 ciertos métodos como el constructor, los métodos equals(), hashCode() y toString(),
 basados en los componentes de datos declarados en la clase.*/
-@JsonPropertyOrder({"email", "message", "jwt", "status"})
-public record AuthResponseDTO (String email, String message, String jwt, boolean status) {
+@JsonPropertyOrder({"username", "message", "jwt", "status"})
+public record AuthResponseDTO (String username, String message, String jwt, boolean status) {
 
 
 }

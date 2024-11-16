@@ -36,7 +36,7 @@ public class JwtTokenValidator extends OncePerRequestFilter {
 
         String jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if(jwtToken != null) {
+        if (jwtToken != null) {
             //en el encabezado antes del token viene la palabra bearer (esquema de autenticación)
             //por lo que debemos sacarlo
             jwtToken = jwtToken.substring(7); //son 7 letras + 1 espacio
@@ -47,15 +47,20 @@ public class JwtTokenValidator extends OncePerRequestFilter {
             //me devuelve claim, necesito pasarlo a String
             String authorities = jwtUtils.getSpecificClaim(decodedJWT, "authorities").asString();
 
+            //Si todo está ok, hay que setearlo en el Context Holder
+            //Para eso tengo que convertirlos a GrantedAuthority
             Collection<? extends GrantedAuthority> authoritiesList = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
 
-            //Damos acceso al usuario en el context holder
+            //Si se valida el token, le damos acceso al usuario en el context holder
             SecurityContext context = SecurityContextHolder.getContext();
             Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authoritiesList);
             context.setAuthentication(authentication);
             SecurityContextHolder.setContext(context);
+
         }
 
-        filterChain.doFilter(request,response);
+        // si no viene token, va al siguiente filtro
+        //si no viene el token, eso arroja error
+        filterChain.doFilter(request, response);
     }
 }

@@ -11,23 +11,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
-@Getter @Setter
+@Entity
+@Table(name="users")
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "users")
-public class UserSec implements UserDetails {
-
+public class UserSec {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-
-    @Column(unique = true, length = 100, nullable = false)
-    private String email;
-
-    @Column(nullable = false)
+    @Column(unique = true)
+    private String username;
+  //  private String email;
     private String password;
 
     private boolean enabled;
@@ -35,41 +31,10 @@ public class UserSec implements UserDetails {
     private boolean accountNotLocked;
     private boolean credentialNotExpired;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    @JsonIgnore // Ignora la serialización de la lista de links
-    private List<Link> links; // Un usuario puede tener múltiples links
-
-    //Set no permite repetidos, list si.
-    @ManyToMany(fetch =  FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL) //el eager me va  a cargar todos los roles
     @JoinTable (name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
+            inverseJoinColumns=@JoinColumn(name = "role_id"))
     private Set<Role> rolesList = new HashSet<>();
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
-
-    @Override
-    public String getUsername() {
-        return "no tiene username";
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
 
 
 }
