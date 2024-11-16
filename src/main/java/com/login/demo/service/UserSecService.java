@@ -29,7 +29,6 @@ public class UserSecService implements IUserSecService {
 
     @Override
     public UserSec save(UserSec userSec) {
-
         return userRepository.save(userSec);
     }
 
@@ -51,7 +50,7 @@ public class UserSecService implements IUserSecService {
    /* public Optional<UserSec> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-   
+
     */
 
 

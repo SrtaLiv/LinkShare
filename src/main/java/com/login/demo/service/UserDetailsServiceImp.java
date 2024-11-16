@@ -39,7 +39,7 @@ public class UserDetailsServiceImp implements UserDetailsService{
 
     @Override
     public UserDetails loadUserByUsername (String username) throws UsernameNotFoundException {
-        UserSec userSec = userRepo.findUserEntityByUsername(username)
+        UserSec userSec = userRepo.findByEmail(username)
                 .orElseThrow(()-> new UsernameNotFoundException("El usuario " + username + "no fue encontrado"));
 
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
@@ -51,7 +51,7 @@ public class UserDetailsServiceImp implements UserDetailsService{
                 .flatMap(role -> role.getPermissionsList().stream()) //acá recorro los permisos de los roles
                 .forEach(permission -> authorityList.add(new SimpleGrantedAuthority(permission.getPermissionName())));
 
-        return new User(userSec.getUsername(),
+        return new User(userSec.getEmail(),
                 userSec.getPassword(),
                 userSec.isEnabled(),
                 userSec.isAccountNotExpired(),
@@ -63,7 +63,7 @@ public class UserDetailsServiceImp implements UserDetailsService{
     public AuthResponseDTO loginUser (AuthLoginRequestDTO authLoginRequest){
 
         //recuperamos nombre de usuario y contraseña
-        String username = authLoginRequest.username();
+        String username = authLoginRequest.email();
         String password = authLoginRequest.password();
 
         Authentication authentication = this.authenticate (username, password);
@@ -75,9 +75,9 @@ public class UserDetailsServiceImp implements UserDetailsService{
 
     }
 
-    public Authentication authenticate (String username, String password) {
+    public Authentication authenticate (String email, String password) {
         //con esto debo buscar el usuario
-        UserDetails userDetails = this.loadUserByUsername(username);
+        UserDetails userDetails = this.loadUserByUsername(email);
 
         if (userDetails==null) {
             throw new BadCredentialsException("Invalid username or password");
@@ -86,7 +86,7 @@ public class UserDetailsServiceImp implements UserDetailsService{
         if (!passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new BadCredentialsException("Invalid password");
         }
-        return new UsernamePasswordAuthenticationToken(username, userDetails.getPassword(), userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(email, userDetails.getPassword(), userDetails.getAuthorities());
     }
 
 }

@@ -22,6 +22,8 @@ public class UserController {
     @Autowired
     private IUserSecService userService;
 
+    @Autowired
+    private IRoleService roleService;
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -41,40 +43,27 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserSec> createUser(@RequestBody UserSec userSec) {
 
-        //encriptacion de contra
+        Set<Role> roleList = new HashSet<Role>();
+        Role readRole;
+
         userSec.setPassword(userService.encriptPassword(userSec.getPassword()));
 
-        //hardcodeo de userSec
-        userSec.setEnabled(true);
-        userSec.setAccountNotExpired(true);
-        userSec.setAccountNotLocked(true);
-        userSec.setCredentialNotExpired(true);
+        // Recuperar la Permission/s por su ID
+        for (Role role : userSec.getRolesList()){
+            readRole = roleService.findById(role.getId()).orElse(null);
+            if (readRole != null) {
+                //si encuentro, guardo en la lista
+                roleList.add(readRole);
+            }
+        }
 
-        // Crear rol "USER" con permisos predeterminados
-        Role defaultRole = new Role();
-        defaultRole.setRole("USER");
+        if (!roleList.isEmpty()) {
+            userSec.setRolesList(roleList);
 
-        // Configurar permisos predeterminados
-        Permission readPermission = new Permission();
-        readPermission.setPermissionName("READ");
-
-        Permission writePermission = new Permission();
-        writePermission.setPermissionName("WRITE");
-
-        // Asignar permisos al rol
-        Set<Permission> permissions = new HashSet<>();
-        permissions.add(readPermission);
-        permissions.add(writePermission);
-        defaultRole.setPermissionsList(permissions);
-
-        // Asignar el rol al usuario
-        Set<Role> roles = new HashSet<>();
-        roles.add(defaultRole);
-        userSec.setRolesList(roles);
-
-
-        UserSec newUser = userService.save(userSec);
-        return ResponseEntity.ok(newUser);
+            UserSec newUser = userService.save(userSec);
+            return ResponseEntity.ok(newUser);
+        }
+        return null;
     }
 
 

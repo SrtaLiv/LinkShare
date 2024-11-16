@@ -43,7 +43,7 @@ public class JwtTokenValidator extends OncePerRequestFilter {
             DecodedJWT decodedJWT = jwtUtils.validateToken(jwtToken);
 
             //si el token es válido, le concedemos el acceso
-            String username = jwtUtils.extractUsername(decodedJWT);
+            String email = jwtUtils.extractUsername(decodedJWT);
             //me devuelve claim, necesito pasarlo a String
             String authorities = jwtUtils.getSpecificClaim(decodedJWT, "authorities").asString();
 
@@ -53,7 +53,7 @@ public class JwtTokenValidator extends OncePerRequestFilter {
 
             //Si se valida el token, le damos acceso al usuario en el context holder
             SecurityContext context = SecurityContextHolder.getContext();
-            Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authoritiesList);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, authoritiesList);
             context.setAuthentication(authentication);
             SecurityContextHolder.setContext(context);
 
