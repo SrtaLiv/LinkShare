@@ -2,11 +2,11 @@ package com.login.demo.utils;
 
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.auth0.jwt.interfaces.JWTVerifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,6 +24,9 @@ public class JwtUtils {
 
     @Value("${security.jwt.user.generator}")
     private String userGenerator;
+
+    @Value("${security.jwt.expiration.time}")
+    private long jwtExpiration;
 
     //Para encriptar, vamos a necesitar esta clave secreta y este algoritmo
     public String createToken (Authentication authentication) {
@@ -53,6 +56,7 @@ public class JwtUtils {
         return jwtToken;
     }
 
+
     //método para decodificar
     public DecodedJWT validateToken(String token) {
 
@@ -60,7 +64,7 @@ public class JwtUtils {
             Algorithm algorithm = Algorithm.HMAC256(this.privateKey); //algoritmo + clave privada
             JWTVerifier verifier = JWT.require(algorithm)
                     .withIssuer(this.userGenerator)
-                    .build();
+                    .build(); //usa patrón builder
 
             //si está todo ok, no genera excepción y hace el return
             DecodedJWT decodedJWT = verifier.verify(token);
@@ -72,18 +76,9 @@ public class JwtUtils {
     }
 
     public String extractUsername (DecodedJWT decodedJWT) {
+        //el subject es el usuario según establecimos al crear el token
         return decodedJWT.getSubject().toString();
     }
-
-    //Extracción de Roles y Permisos
-    public Set<String> extractRoles(DecodedJWT decodedJWT) {
-        return new HashSet<>(decodedJWT.getClaim("roles").asList(String.class));
-    }
-
-    public Set<String> extractPermissions(DecodedJWT decodedJWT) {
-        return new HashSet<>(decodedJWT.getClaim("permissions").asList(String.class));
-    }
-
 
     //devuelvo un claim en particular
     public Claim getSpecificClaim (DecodedJWT decodedJWT, String claimName) {

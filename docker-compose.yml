@@ -1,17 +1,15 @@
-version: '2.0'
-
 services:
   db:
     image: mysql:8.0
-    container_name: links-mysql-db
+    container_name: linkshare-mysql-db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root_password  # Establece una contraseña para root
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
       MYSQL_DATABASE: linkShare
     ports:
       - "3306:3306"
     volumes:
-      - links-db-data:/var/lib/mysql
+      - link-db-data:/var/lib/mysql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -20,11 +18,11 @@ services:
     environment:
       PMA_HOST: db
       PMA_USER: root
-      PMA_PASSWORD: root_password  # Usa la misma contraseña de root que en db
+      PMA_PASSWORD:
     ports:
       - "8080:80"
     depends_on:
       - db
 
 volumes:
-  links-db-data:
+  link-db-data:
