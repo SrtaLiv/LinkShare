@@ -9,8 +9,6 @@ import com.login.demo.service.UserSecService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,9 +19,6 @@ import java.util.Optional;
 public class LinkController {
     @Autowired
     private ILinkService linkService;
-    @Autowired
-    private UserSecService userService;
-
 
     @GetMapping("/{id}")
     public Optional<Link> getLinkById(@PathVariable Long id){

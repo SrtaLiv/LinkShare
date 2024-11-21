@@ -19,4 +19,18 @@ public class TestAuthController {
         public String sayHiSec(){
             return "Hi! This endpoint has been secured";
         }
+
+    @GetMapping("/holaseg")
+    @PreAuthorize("hasAnyRole('USER')")
+    public String secHelloWorld() {
+        return "Hola Mundo";
+    }
+
+    @GetMapping("/holanoseg")
+    @PreAuthorize("permitAll()")
+    public String noSecHelloWorld() {
+
+        return "Hola mundo";
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.login.demo.config.filter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.login.demo.service.UserSecService;
 import com.login.demo.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,14 +15,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 import java.util.Collection;
 
 //mediante el extends establecemos que es un filtro que se tiene que ejecutar siempre
 public class JwtTokenValidator extends OncePerRequestFilter {
-
     private JwtUtils jwtUtils;
 
     public JwtTokenValidator(JwtUtils jwtUtils) {

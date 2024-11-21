@@ -1,10 +1,12 @@
 package com.login.demo.controller;
 
+import com.login.demo.dto.RegisterUserDto;
 import com.login.demo.models.Permission;
 import com.login.demo.models.Role;
 import com.login.demo.models.UserSec;
 import com.login.demo.service.IRoleService;
 import com.login.demo.service.IUserSecService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,9 +24,11 @@ public class UserController {
     @Autowired
     private IUserSecService userService;
 
+    @Autowired
+    private IRoleService roleService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<List<UserSec>> getAllUsers() {
         List<UserSec> users = userService.findAll();
         return ResponseEntity.ok(users);
@@ -38,44 +42,28 @@ public class UserController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserSec> createUser(@RequestBody UserSec userSec) {
+        Set<Role> roleList = new HashSet<Role>();
+        Role readRole;
 
-        //encriptacion de contra
+        //encriptamos contraseña
         userSec.setPassword(userService.encriptPassword(userSec.getPassword()));
 
-        //hardcodeo de userSec
-        userSec.setEnabled(true);
-        userSec.setAccountNotExpired(true);
-        userSec.setAccountNotLocked(true);
-        userSec.setCredentialNotExpired(true);
+        // Recuperar la Permission/s por su ID
+        for (Role role : userSec.getRolesList()){
+            readRole = roleService.findById(role.getId()).orElse(null);
+            if (readRole != null) {
+                roleList.add(readRole);
+            }
+        }
 
-        // Crear rol "USER" con permisos predeterminados
-        Role defaultRole = new Role();
-        defaultRole.setRole("USER");
+        if (!roleList.isEmpty()) {
+            userSec.setRolesList(roleList);
 
-        // Configurar permisos predeterminados
-        Permission readPermission = new Permission();
-        readPermission.setPermissionName("READ");
-
-        Permission writePermission = new Permission();
-        writePermission.setPermissionName("WRITE");
-
-        // Asignar permisos al rol
-        Set<Permission> permissions = new HashSet<>();
-        permissions.add(readPermission);
-        permissions.add(writePermission);
-        defaultRole.setPermissionsList(permissions);
-
-        // Asignar el rol al usuario
-        Set<Role> roles = new HashSet<>();
-        roles.add(defaultRole);
-        userSec.setRolesList(roles);
-
-
-        UserSec newUser = userService.save(userSec);
-        return ResponseEntity.ok(newUser);
+            UserSec newUser = userService.save(userSec);
+            return ResponseEntity.ok(newUser);
+        }
+        return null;
     }
-
 
 }
