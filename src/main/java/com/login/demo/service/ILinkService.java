@@ -12,5 +12,5 @@ public interface ILinkService {
     Link save(Link link);
     void deleteById(Long id);
     void update(Link link);
-
+  //  List<Link> findLinksByUsuario(String username);
 }

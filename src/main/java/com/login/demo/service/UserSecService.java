@@ -46,5 +46,9 @@ public class UserSecService implements IUserSecService {
         return new BCryptPasswordEncoder().encode(password);
     }
 
+    public Optional<UserSec> findByEmail(String username) {
+        return userRepository.findByEmail(username);
+    }
+
 
 }

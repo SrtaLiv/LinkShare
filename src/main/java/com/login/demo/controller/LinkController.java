@@ -5,11 +5,11 @@ import com.login.demo.models.Link;
 import com.login.demo.models.UserSec;
 import com.login.demo.service.ILinkService;
 
-import com.login.demo.service.UserSecService;
+import com.login.demo.service.IUserSecService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +21,17 @@ import java.util.Optional;
 public class LinkController {
     @Autowired
     private ILinkService linkService;
+    @Autowired
+    private IUserSecService userSecService;
 
+    //CUALQUIERA PEUDE VER LOS LINKS DE UN USUARIO
+   /* @GetMapping("/{username}")
+    public ResponseEntity<List<Link>> findAllLinksUsername(@PathVariable String username){
+       List<Link> linkList = linkService.findLinksByUsuario(username);
+        return ResponseEntity.ok(linkList);
+    }*/
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/{id}")
     public Optional<Link> getLinkById(@PathVariable Long id){
         Optional<Link> link = linkService.findById(id);
@@ -36,25 +46,31 @@ public class LinkController {
     }
 
     //debemos asociar cada link al usuario autenticado, como=?
+    @PreAuthorize("hasAnyRole('USER')")
     @PostMapping()
-    public ResponseEntity<Link> createLink(@RequestBody LinkDTO linkDTO) {
-
+    public ResponseEntity<Link> createLink(@RequestBody LinkDTO linkUserDTO) {
         // Obtener el usuario autenticado
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // Buscar al usuario en la base de datos
+        Optional<UserSec> userOpt = userSecService.findByEmail(username);
+
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Usuario no encontrado o no autenticado
+        }
+
+        UserSec user = userOpt.get();
 
         Link newLink = new Link();
-        newLink.setLink(linkDTO.getLink());
-        newLink.setPlatform(linkDTO.getPlatform());
-     //   newLink.setUsuario(email);
+        newLink.setPlatform(linkUserDTO.getPlatform());
+        newLink.setLink(linkUserDTO.getLink());
+        newLink.setUsuario(user);
 
         Link savedLink = linkService.save(newLink);
-
-        //LinkDTO responseDto = new LinkDTO(savedLink.getLink(), savedLink.getPlatform(), 1);
-
-        return  ResponseEntity.ok(linkService.save(newLink));
+        return ResponseEntity.ok(savedLink);
     }
 
+    @PreAuthorize("hasAnyRole('USER')")
     @PutMapping("/{id}")
     public ResponseEntity<Link> updateLink(@PathVariable Long id, @RequestBody LinkDTO linkDTO) {
         Optional<Link> existingLinkOpt = linkService.findById(id);
@@ -72,6 +88,7 @@ public class LinkController {
         return ResponseEntity.ok(updatedLink);
     }
 
+    @PreAuthorize("hasAnyRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLink(@PathVariable Long id) {
         linkService.deleteById(id);

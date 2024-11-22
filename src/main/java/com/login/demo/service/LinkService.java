@@ -1,6 +1,5 @@
 package com.login.demo.service;
 
-import com.login.demo.dto.LinkDTO;
 import com.login.demo.models.Link;
 import com.login.demo.repository.ILinkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,4 +38,10 @@ public class LinkService implements ILinkService {
         linkRepository.save(link);
     }
 
+/*
+    @Override
+    public List<Link> findLinksByUsuario(String username) {
+        return linkRepository.findLinksByUsuario(username);
+    }
+*/
 }
