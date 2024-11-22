@@ -15,5 +15,5 @@ public interface IUserSecService {
     public void update(UserSec userSec);
     public String encriptPassword(String password);
 
-
+    Optional<UserSec> findByEmail(String email);
 }

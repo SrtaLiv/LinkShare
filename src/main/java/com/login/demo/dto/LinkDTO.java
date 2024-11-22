@@ -15,5 +15,11 @@ public class LinkDTO {
         this.platform = platform;
         this.userId = userId;
     }
+
+    public LinkDTO(String link, String platform) {
+        this.link = link;
+        this.platform = platform;
+    }
+
     public LinkDTO() {}
 }
