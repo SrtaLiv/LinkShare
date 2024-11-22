@@ -5,6 +5,7 @@ import com.login.demo.dto.AuthResponseDTO;
 import com.login.demo.dto.RegisterUserDto;
 import com.login.demo.models.Role;
 import com.login.demo.models.UserSec;
+import com.login.demo.repository.IRoleRepository;
 import com.login.demo.repository.IUserRepository;
 import com.login.demo.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class UserDetailsServiceImp implements UserDetailsService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    IRoleRepository roleRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -88,6 +92,14 @@ public class UserDetailsServiceImp implements UserDetailsService {
         newUser.setAccountNotLocked(true);
         newUser.setCredentialNotExpired(true);
 
+        List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
+
+        Role role = roleRepository.findByRole("USER");
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+
+        newUser.setRolesList(roles);
+        //agregar roles.
         UserSec savedUser = userRepo.save(newUser);
         return ResponseEntity.ok(savedUser).getBody();
     }

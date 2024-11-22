@@ -15,21 +15,20 @@ public class TestAuthController {
         }
 
         @GetMapping("/sayhisec")
-        @PreAuthorize("isAuthenticated()")
+        @PreAuthorize("hasAnyRole('USER')")
         public String sayHiSec(){
             return "Hi! This endpoint has been secured";
         }
 
-    @GetMapping("/holaseg")
-    @PreAuthorize("hasAnyRole('USER')")
+    @GetMapping("/admins")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public String secHelloWorld() {
-        return "Hola Mundo";
+        return "Hola SOLO ADMINS!";
     }
 
     @GetMapping("/holanoseg")
     @PreAuthorize("permitAll()")
     public String noSecHelloWorld() {
-
         return "Hola mundo";
     }
 
