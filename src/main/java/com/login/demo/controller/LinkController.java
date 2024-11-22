@@ -9,6 +9,8 @@ import com.login.demo.service.UserSecService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,28 +35,25 @@ public class LinkController {
         return ResponseEntity.ok(linkList);
     }
 
-   /* @PostMapping()
-    public ResponseEntity<LinkDTO> createLink(@RequestBody LinkDTO linkDTO) {
+    //debemos asociar cada link al usuario autenticado, como=?
+    @PostMapping()
+    public ResponseEntity<Link> createLink(@RequestBody LinkDTO linkDTO) {
 
         // Obtener el usuario autenticado
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
-        // Obtener el usuario de la base de datos usando email
-        UserSec user = userService.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado")); // Manejo de error si no se encuentra el usuario
-
         Link newLink = new Link();
         newLink.setLink(linkDTO.getLink());
         newLink.setPlatform(linkDTO.getPlatform());
-        newLink.setUsuario(user);
+     //   newLink.setUsuario(email);
 
         Link savedLink = linkService.save(newLink);
 
-        LinkDTO responseDto = new LinkDTO(savedLink.getLink(), savedLink.getPlatform(), user.getId());
+        //LinkDTO responseDto = new LinkDTO(savedLink.getLink(), savedLink.getPlatform(), 1);
 
-        return  ResponseEntity.ok(responseDto);
-    }*/
+        return  ResponseEntity.ok(linkService.save(newLink));
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Link> updateLink(@PathVariable Long id, @RequestBody LinkDTO linkDTO) {
