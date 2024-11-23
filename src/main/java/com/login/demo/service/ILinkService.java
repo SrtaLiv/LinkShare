@@ -1,6 +1,7 @@
 package com.login.demo.service;
 
 import com.login.demo.dto.LinkDTO;
+import com.login.demo.dto.LinkUserDTO;
 import com.login.demo.models.Link;
 
 import java.util.List;
@@ -12,5 +13,5 @@ public interface ILinkService {
     Link save(Link link);
     void deleteById(Long id);
     void update(Link link);
-  //  List<Link> findLinksByUsuario(String username);
+    List<LinkUserDTO> findLinksByUsuario(String username);
 }

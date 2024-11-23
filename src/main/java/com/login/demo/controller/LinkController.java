@@ -1,6 +1,7 @@
 package com.login.demo.controller;
 
 import com.login.demo.dto.LinkDTO;
+import com.login.demo.dto.LinkUserDTO;
 import com.login.demo.models.Link;
 import com.login.demo.models.UserSec;
 import com.login.demo.service.ILinkService;
@@ -21,15 +22,18 @@ import java.util.Optional;
 public class LinkController {
     @Autowired
     private ILinkService linkService;
+
     @Autowired
     private IUserSecService userSecService;
 
     //CUALQUIERA PEUDE VER LOS LINKS DE UN USUARIO
-   /* @GetMapping("/{username}")
-    public ResponseEntity<List<Link>> findAllLinksUsername(@PathVariable String username){
-       List<Link> linkList = linkService.findLinksByUsuario(username);
+    @GetMapping("/user/{username}")
+    public ResponseEntity<List<LinkUserDTO>> findLinksByUsuario(@PathVariable String username){
+
+       List<LinkUserDTO> linkList = linkService.findLinksByUsuario(username);
+
         return ResponseEntity.ok(linkList);
-    }*/
+    }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/{id}")
