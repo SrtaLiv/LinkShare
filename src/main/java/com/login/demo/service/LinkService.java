@@ -1,14 +1,17 @@
 package com.login.demo.service;
 
+import com.login.demo.dto.LinkUserDTO;
 import com.login.demo.models.Link;
 import com.login.demo.repository.ILinkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LinkService implements ILinkService {
+
     @Autowired
     private ILinkRepository linkRepository;
 
@@ -38,10 +41,12 @@ public class LinkService implements ILinkService {
         linkRepository.save(link);
     }
 
-/*
     @Override
-    public List<Link> findLinksByUsuario(String username) {
-        return linkRepository.findLinksByUsuario(username);
+    public List<LinkUserDTO> findLinksByUsuario(String username) {
+        List<Link> links = linkRepository.findByUsuarioUsername(username);
+        return links.stream()
+                .map(link -> new LinkUserDTO(link.getLink(), link.getPlatform(), link.getUsuario().getUsername()))
+                .collect(Collectors.toList());
     }
-*/
+
 }
