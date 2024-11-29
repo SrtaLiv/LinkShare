@@ -1,5 +1,6 @@
 package com.login.demo.models;
 
+import com.login.demo.mail.ConfirmationToken;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,10 +29,8 @@ public class UserSec{
     private boolean accountNotLocked;
     private boolean credentialNotExpired;
 
-    @Column(name = "verification_code")
-    private String verificationCode;
-    @Column(name = "verification_expiration")
-    private LocalDateTime verificationCodeExpiresAt;
+    @OneToOne(mappedBy = "userSec", cascade = CascadeType.ALL)
+    private ConfirmationToken confirmationToken;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable (name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),

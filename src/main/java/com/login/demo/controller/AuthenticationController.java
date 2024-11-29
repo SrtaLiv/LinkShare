@@ -1,19 +1,14 @@
 package com.login.demo.controller;
 
 import com.login.demo.dto.AuthLoginRequestDTO;
-import com.login.demo.dto.AuthResponseDTO;
 import com.login.demo.dto.RegisterUserDto;
-import com.login.demo.models.UserSec;
+import com.login.demo.mail.ConfirmationTokenService;
 import com.login.demo.service.UserDetailsServiceImp;
-import com.login.demo.service.UserSecService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -21,6 +16,8 @@ public class AuthenticationController {
     @Autowired
     private UserDetailsServiceImp userDetailsService;
 
+    @Autowired
+    private ConfirmationTokenService confirmationToken;
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthLoginRequestDTO userRequest) {
@@ -32,5 +29,13 @@ public class AuthenticationController {
         return new ResponseEntity<>(this.userDetailsService.signupUser(userRequest), HttpStatus.OK);
     }
 
-
+    @GetMapping("/confirm")
+    public ResponseEntity<Object> confirm(@RequestParam("token") String token) {
+        try {
+            confirmationToken.confirmToken(token);
+            return ResponseEntity.ok("Gracias, tu cuenta ha sido verificada.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

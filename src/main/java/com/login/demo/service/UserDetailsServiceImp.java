@@ -3,13 +3,15 @@ package com.login.demo.service;
 import com.login.demo.dto.AuthLoginRequestDTO;
 import com.login.demo.dto.AuthResponseDTO;
 import com.login.demo.dto.RegisterUserDto;
+import com.login.demo.mail.ConfirmationTokenService;
+import com.login.demo.mail.EmailService;
+import com.login.demo.mail.ConfirmationToken;
 import com.login.demo.models.Role;
 import com.login.demo.models.UserSec;
 import com.login.demo.repository.IRoleRepository;
 import com.login.demo.repository.IUserRepository;
 import com.login.demo.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,6 +40,12 @@ public class UserDetailsServiceImp implements UserDetailsService {
 
     @Autowired
     IRoleRepository roleRepository;
+
+    @Autowired
+    ConfirmationTokenService confirmationTokenService;
+
+    @Autowired
+    EmailService emailService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -87,21 +95,23 @@ public class UserDetailsServiceImp implements UserDetailsService {
         newUser.setEmail(registerUserDto.getEmail());
         newUser.setUsername(registerUserDto.getUsername());
         newUser.setPassword(this.passwordEncoder.encode(registerUserDto.getPassword()));
-        newUser.setEnabled(true);
+        newUser.setEnabled(false); // El usuario no está habilitado hasta verificar el email
         newUser.setAccountNotExpired(true);
         newUser.setAccountNotLocked(true);
         newUser.setCredentialNotExpired(true);
 
-        List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
-
-        Role role = roleRepository.findByRole("USER");
+        Role role = roleRepository.findByRole("USER"); //Rol por defecto
         Set<Role> roles = new HashSet<>();
         roles.add(role);
-
         newUser.setRolesList(roles);
-        //agregar roles.
+
         UserSec savedUser = userRepo.save(newUser);
-        return ResponseEntity.ok(savedUser).getBody();
+
+        // Generar y enviar el token
+        ConfirmationToken confirmationToken = confirmationTokenService.generateToken(newUser);
+        emailService.sendVerificationEmail(confirmationToken);
+
+        return savedUser;
     }
 
     public Authentication authenticate(String username, String password) {

@@ -3,6 +3,7 @@ package com.login.demo.service;
 import com.login.demo.models.UserSec;
 import com.login.demo.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -50,5 +51,11 @@ public class UserSecService implements IUserSecService {
         return userRepository.findByEmail(username);
     }
 
+    public void enableUser(String username) {
+        UserSec user = userRepository.findUserEntityByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        user.setEnabled(true);
+        userRepository.save(user);
+    }
 
 }

@@ -48,7 +48,7 @@ public class JwtUtils {
                 .withSubject(username) // a quien se le genera el token
                 .withClaim("authorities", authorities) //claims son los datos contraidos en el JWT
                 .withIssuedAt(new Date()) //fecha de generación del token
-                .withExpiresAt(new Date(System.currentTimeMillis() + 1800000)) //fecha de expiración, tiempo en milisegundos
+                .withExpiresAt(new Date(System.currentTimeMillis() + jwtExpiration)) //fecha de expiración, tiempo en milisegundos
                 .withJWTId(UUID.randomUUID().toString()) //id al token - que genere una random
                 .withNotBefore(new Date (System.currentTimeMillis())) //desde cuando es válido (desde ahora en este caso)
                 .sign(algorithm); //nuestra firma es la que creamos con la clave secreta
