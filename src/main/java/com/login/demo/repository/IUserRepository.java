@@ -12,5 +12,4 @@ public interface IUserRepository extends JpaRepository<UserSec, Long> {
 
     Optional<UserSec> findUserEntityByUsername(String username);
     Optional<UserSec> findByEmail(String email);
-    Optional<UserSec> findByVerificationCode(String verificationCode);
 }
