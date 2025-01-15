@@ -33,12 +33,12 @@ public class SecurityConfig {
     @Autowired
     private IUserRepository userRepository;
 
-    /*@Bean
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .formLogin(Customizer.withDefaults())
-                //.oauth2Login(Customizer.withDefaults()) // Login con OAuth2
+                .oauth2Login(Customizer.withDefaults()) // Login con OAuth2
 
                 // Configuración de manejo de sesión
                 .sessionManagement(session -> session
@@ -47,7 +47,8 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)
                 .httpBasic(Customizer.withDefaults())
                 .build();
-    }*/
+    }
+    /*
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -59,7 +60,7 @@ public class SecurityConfig {
                 .build();
     }
 
-
+*/
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
