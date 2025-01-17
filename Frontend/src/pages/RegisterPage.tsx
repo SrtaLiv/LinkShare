@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Button, OutlinedInput } from '@mui/material';
 import AddAPhoto from '@mui/icons-material/AddAPhoto';
 import { GoogleAuth } from './components/GoogleAuth';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 
 export const RegisterPage = () => {
     const [step, setStep] = useState(1);
@@ -10,6 +11,7 @@ export const RegisterPage = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [username, setusername] = useState('');
+    const navigate = useNavigate();
 
     // Function to handle registration
     const handleRegister = async () => {
@@ -17,9 +19,7 @@ export const RegisterPage = () => {
             alert("Passwords do not match!");
             return;
         }
-
-        const message = "Email enviado, verifica tu casilla."
-
+        
         const userRequest = {
             email,
             password,
@@ -29,7 +29,7 @@ export const RegisterPage = () => {
         try {
             const response = await axios.post('http://localhost:8081/auth/signup', userRequest);
             console.log('Registration successful:', response.data);
-            // Handle successful registration (e.g., redirect or show a success message)
+            navigate(`/verification/${username}`);          // Handle successful registration (e.g., redirect to dashboard or show a success message)
         } catch (error) {
             console.error("Error during registration:", error);
             // Handle error (e.g., show an error message)
@@ -113,7 +113,8 @@ export const RegisterPage = () => {
                         </div>
                     </div>
                 )}
-               {/* <GoogleAuth /> */}
+                
+               <GoogleAuth />
             </div>
         </main>
     );

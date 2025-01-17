@@ -10,22 +10,19 @@ export const LoginPage = () => {
     const navigate = useNavigate();
 
     const handleLogin = async () => {
-        const userRequest = {
-            email,
-            password
-        };
+        const userRequest = { email, password };
 
         try {
             const response = await axios.post('http://localhost:8081/auth/login', userRequest);
-            console.log('Login successful:', response.data);
-            const username = response.data.username;
-            navigate(`/user/${username}`);            // Handle successful login (e.g., redirect to dashboard or show a success message)
-        } catch (error) {
-            console.error("Error during login:", error);
-            // Handle error (e.g., show an error message)
+            const token = response.data.jwt; // Backend debería devolver el token aquí
+            console.log('Token:', token);
+            localStorage.setItem('authToken', token); // Guardar el token en localStorage
+            navigate(`/dashboard`); // Redirigir al dashboard
+        } 
+        catch (error) {
+            console.error('Error during login:', error);
         }
     };
-
     return (
         <main className="w-full min-h-screen flex items-center">
             <div className="md:w-[33%] mx-auto flex flex-col">
@@ -56,7 +53,7 @@ export const LoginPage = () => {
                     </div>
 
                     <Button onClick={handleLogin} variant="contained" className="bg-indigo-500 text-white flex-1">Login</Button>
-                   
+
                     <GoogleAuth />
 
                 </div>

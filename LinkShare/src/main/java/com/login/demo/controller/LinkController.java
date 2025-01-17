@@ -1,12 +1,13 @@
 package com.login.demo.controller;
 
 import com.login.demo.dto.LinkDTO;
-import com.login.demo.dto.LinkUserDTO;
+import com.login.demo.dto.LinkResponseDTO;
 import com.login.demo.models.Link;
 import com.login.demo.models.UserSec;
 import com.login.demo.service.ILinkService;
 
 import com.login.demo.service.IUserSecService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,10 +30,8 @@ public class LinkController {
 
     //CUALQUIERA PEUDE VER LOS LINKS DE UN USUARIO
     @GetMapping("/user/{username}")
-    public ResponseEntity<List<LinkUserDTO>> findLinksByUsuario(@PathVariable String username){
-
-       List<LinkUserDTO> linkList = linkService.findLinksByUsuario(username);
-
+    public ResponseEntity<List<LinkDTO>> findLinksByUsuario(@PathVariable String username){
+       List<LinkDTO> linkList = linkService.findLinksByUsuario(username);
         return ResponseEntity.ok(linkList);
     }
 
@@ -51,29 +50,35 @@ public class LinkController {
     }
 
     //debemos asociar cada link al usuario autenticado, como=?
+    @PostMapping
     @PreAuthorize("hasAnyRole('USER')")
-    @PostMapping()
-    public ResponseEntity<Link> createLink(@RequestBody LinkDTO linkUserDTO) {
-        // Obtener el usuario autenticado
+    public ResponseEntity<LinkResponseDTO> createLink(@Valid @RequestBody LinkDTO linkUserDTO) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        // Buscar al usuario en la base de datos
         Optional<UserSec> userOpt = userSecService.findByEmail(username);
 
         if (userOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Usuario no encontrado o no autenticado
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .build();
         }
 
         UserSec user = userOpt.get();
-
         Link newLink = new Link();
         newLink.setPlatform(linkUserDTO.getPlatform());
         newLink.setLink(linkUserDTO.getLink());
         newLink.setUsuario(user);
 
         Link savedLink = linkService.save(newLink);
-        return ResponseEntity.ok(savedLink);
+
+        LinkResponseDTO responseDTO = new LinkResponseDTO(
+                savedLink.getPlatform(),
+                savedLink.getLink(),
+                user.getUsername(),
+                user.getEmail()
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
+
 
     @PreAuthorize("hasAnyRole('USER')")
     @PutMapping("/{id}")
