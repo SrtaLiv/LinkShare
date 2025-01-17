@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -36,6 +38,9 @@ public class UserSec{
     @JoinTable (name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns=@JoinColumn(name = "role_id"))
     private Set<Role> rolesList = new HashSet<>();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Link> links = new ArrayList<>();
 
     public UserSec(String email, String username,  String password) {
         this.email = email;

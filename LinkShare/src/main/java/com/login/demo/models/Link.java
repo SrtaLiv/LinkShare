@@ -22,7 +22,6 @@ public class Link {
     private String platform;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", nullable = false)
     private UserSec usuario;
-
 }

@@ -6,18 +6,26 @@ import com.login.demo.models.Role;
 import com.login.demo.models.UserSec;
 import com.login.demo.service.IRoleService;
 import com.login.demo.service.IUserSecService;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.security.Principal;
+import java.text.ParseException;
+import java.util.*;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -27,6 +35,33 @@ public class UserController {
 
     @Autowired
     private IRoleService roleService;
+
+    @GetMapping("/data")
+    public Map<String, Object> userInfo(@AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) {
+            throw new IllegalArgumentException("User info is not available");
+        }
+        return principal.getAttributes();
+    }
+
+    @GetMapping("/info")
+    @PreAuthorize("hasAnyRole('USER')")
+    public ResponseEntity<Map<String, String>> getInfo() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<UserSec> userOpt = userService.findByEmail(username);
+
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        UserSec user = userOpt.get();
+
+        Map<String, String> userInfo = new HashMap<>();
+        userInfo.put("username", user.getUsername());
+        userInfo.put("email", user.getEmail());
+
+        return ResponseEntity.ok(userInfo);
+    }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN')")
@@ -66,5 +101,6 @@ public class UserController {
         }
         return null;
     }
+
 
 }

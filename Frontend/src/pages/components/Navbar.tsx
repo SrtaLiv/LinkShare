@@ -11,6 +11,7 @@ import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
+import { Link } from 'react-router-dom';
 
 export default function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -24,8 +25,21 @@ export default function Navbar() {
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-        <Typography sx={{ minWidth: 100 }}>Contact</Typography>
-        <Typography sx={{ minWidth: 100 }}>Profile</Typography>
+        <Link to="/">
+          <Typography sx={{ minWidth: 100 }}>Inicio</Typography>
+        </Link>
+        <Link to="/user/:username">
+          <Typography sx={{ minWidth: 100 }}>Mi perfil</Typography>
+        </Link>
+        <Link to="/login">
+          <Typography sx={{ minWidth: 100 }}>Inicia sesion</Typography>
+        </Link>
+        <Link to="/register">
+          <Typography sx={{ minWidth: 100 }}>Registrate</Typography>
+        </Link>
+        <Link to="/dashboard">
+          <Typography sx={{ minWidth: 100 }}>Dashboard</Typography>
+        </Link>
         <Tooltip title="Account settings">
           <IconButton
             onClick={handleClick}

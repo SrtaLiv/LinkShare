@@ -30,6 +30,11 @@ public class AuthenticationController {
         return new ResponseEntity<>(this.userDetailsService.signupUser(userRequest), HttpStatus.OK);
     }
 
+   /* @PostMapping("/logout")
+    public ResponseEntity logout() {
+        return new ResponseEntity<>();
+    }
+*/
     @GetMapping("/confirm")
     public ResponseEntity<Object> confirm(@RequestParam("token") String token) {
         try {
