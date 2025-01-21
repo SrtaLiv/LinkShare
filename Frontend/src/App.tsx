@@ -8,6 +8,7 @@ import VerificationPage from './pages/components/VerificationEmail/VerificationE
 import ResendVerificationPage from './pages/components/VerificationEmail/ResendVerificationEmail';
 import React from 'react';
 import AuthProvider from './pages/auth/AuthProvider';
+import { UserProfilePage } from './pages/UserProfilePage';
 
 export default function App() {
 
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           
           <Route path="/user/:username" element={<HomePage />} />
+
           <Route path="/register" element={<RegisterPage />} />
 
           <Route path="/verification" element={<VerificationPage />} />

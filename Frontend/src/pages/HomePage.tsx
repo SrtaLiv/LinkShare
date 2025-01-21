@@ -1,21 +1,32 @@
 import { AddLink, MoreHoriz, NotificationsNone } from "@mui/icons-material";
 import LinksByUser from "./LinksPage";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { AddLinkBTN } from "./components/AddLink/AddLinks";
+import { useAuth } from "./auth/AuthProvider";
 
 export const HomePage = () => {
     const { username } = useParams();
-    const [userData, setUserData] = useState(null); // Estado para almacenar los datos del usuario
+    const { user } = useAuth();
+    const navigate = useNavigate();
+    const [userData, setUserData] = useState(null);
 
     useEffect(() => {
-        // Obtener los datos del usuario desde la API
-        axios
-            .get(`http://localhost:8081/api/links/user/${username}`)
-            .then((response) => setUserData(response.data))
-            .catch((error) => console.error("Error fetching user data:", error));
+        if (user && user.username) {
+            navigate(`/user/${user.username}`);
+        }
+    }, [user, navigate]);
+
+    useEffect(() => {
+        if (username) {
+            axios
+                .get(`http://localhost:8081/api/links/user/${username}`)
+                .then((response) => setUserData(response.data))
+                .catch((error) => console.error("Error fetching user data:", error));
+        }
     }, [username]);
+
     return (
         <main className="w-full min-h-screen flex bg-teal-100">
 
