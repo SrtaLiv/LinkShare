@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
@@ -12,10 +12,32 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [userData, setUserData] = useState(null);
   const open = Boolean(anchorEl);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem('authToken');
+      
+      if (token) {
+        try {
+          const response = await axios.get('http://localhost:8081/api/users/info', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          setUserData(response.data);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -28,7 +50,7 @@ export default function Navbar() {
         <Link to="/">
           <Typography sx={{ minWidth: 100 }}>Inicio</Typography>
         </Link>
-        <Link to="/user/:username">
+        <Link to={userData ? `/user/${userData.username}` : '/login'}>
           <Typography sx={{ minWidth: 100 }}>Mi perfil</Typography>
         </Link>
         <Link to="/login">
