@@ -53,9 +53,6 @@ export const LoginPage = () => {
                     </div>
 
                     <Button onClick={handleLogin} variant="contained" className="bg-indigo-500 text-white flex-1">Login</Button>
-
-                    <GoogleAuth />
-
                 </div>
             </div>
         </main>

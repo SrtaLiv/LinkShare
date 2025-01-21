@@ -113,8 +113,6 @@ export const RegisterPage = () => {
                         </div>
                     </div>
                 )}
-                
-               <GoogleAuth />
             </div>
         </main>
     );
