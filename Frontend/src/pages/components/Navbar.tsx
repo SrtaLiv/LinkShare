@@ -1,28 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Tooltip from '@mui/material/Tooltip';
-import PersonAdd from '@mui/icons-material/PersonAdd';
-import Settings from '@mui/icons-material/Settings';
-import Logout from '@mui/icons-material/Logout';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { 
+  Box, 
+  Typography, 
+  AppBar, 
+  Toolbar, 
+  Avatar, 
+  IconButton, 
+  Menu, 
+  MenuItem, 
+  Container,
+  Button
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import HomeIcon from '@mui/icons-material/Home';
+import LoginIcon from '@mui/icons-material/Login';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 export default function Navbar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [userData, setUserData] = useState(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem('authToken');
-      
       if (token) {
         try {
           const response = await axios.get('http://localhost:8081/api/users/info', {
@@ -34,110 +41,166 @@ export default function Navbar() {
         }
       }
     };
-
     fetchUserData();
   }, []);
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setMobileMoreAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
-    setAnchorEl(null);
+
+  const handleMobileMenuClose = () => {
+    setMobileMoreAnchorEl(null);
   };
+
   return (
-    <React.Fragment>
-      <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-        <Link to="/">
-          <Typography sx={{ minWidth: 100 }}>Inicio</Typography>
-        </Link>
-        <Link to={userData ? `/user/${userData.username}` : '/login'}>
-          <Typography sx={{ minWidth: 100 }}>Mi perfil</Typography>
-        </Link>
-        <Link to="/login">
-          <Typography sx={{ minWidth: 100 }}>Inicia sesion</Typography>
-        </Link>
-        <Link to="/register">
-          <Typography sx={{ minWidth: 100 }}>Registrate</Typography>
-        </Link>
-        <Link to="/dashboard">
-          <Typography sx={{ minWidth: 100 }}>Dashboard</Typography>
-        </Link>
-        <Tooltip title="Account settings">
-          <IconButton
-            onClick={handleClick}
-            size="small"
-            sx={{ ml: 2 }}
-            aria-controls={open ? 'account-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-          >
-            <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
-          </IconButton>
-        </Tooltip>
-      </Box>
+    <AppBar position="static" sx={{ backgroundColor: '#2c3e50' }}>
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          {/* Desktop Menu */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', width: '100%' }}>
+            <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
+              <Button
+                startIcon={<HomeIcon />}
+                sx={{ 
+                  color: 'white',
+                  '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' }
+                }}
+              >
+                Inicio
+              </Button>
+            </Link>
+
+            <Link to={userData ? `/user/${userData.username}` : '/login'} style={{ textDecoration: 'none', color: 'white' }}>
+              <Button
+                startIcon={<AccountCircleIcon />}
+                sx={{ 
+                  color: 'white',
+                  ml: 2,
+                  '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' }
+                }}
+              >
+                Mi Perfil
+              </Button>
+            </Link>
+
+            <Link to="/dashboard" style={{ textDecoration: 'none', color: 'white' }}>
+              <Button
+                startIcon={<DashboardIcon />}
+                sx={{ 
+                  color: 'white',
+                  ml: 2,
+                  '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' }
+                }}
+              >
+                Dashboard
+              </Button>
+            </Link>
+
+            <Box sx={{ flexGrow: 1 }} />
+
+            {!userData ? (
+              <>
+                <Link to="/login" style={{ textDecoration: 'none', color: 'white' }}>
+                  <Button
+                    startIcon={<LoginIcon />}
+                    sx={{ 
+                      color: 'white',
+                      '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' }
+                    }}
+                  >
+                    Iniciar Sesión
+                  </Button>
+                </Link>
+                <Link to="/register" style={{ textDecoration: 'none', color: 'white' }}>
+                  <Button
+                    startIcon={<PersonAddIcon />}
+                    sx={{ 
+                      color: 'white',
+                      ml: 2,
+                      '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' }
+                    }}
+                  >
+                    Registrarse
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <Avatar 
+                sx={{ 
+                  width: 32, 
+                  height: 32,
+                  cursor: 'pointer',
+                  bgcolor: '#1abc9c'
+                }}
+              >
+                {userData.username[0].toUpperCase()}
+              </Avatar>
+            )}
+          </Box>
+
+          {/* Mobile Menu */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, width: '100%' }}>
+            <IconButton
+              size="large"
+              onClick={handleMobileMenuOpen}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ flexGrow: 1, textAlign: 'center' }}
+            >
+              Mi App
+            </Typography>
+            {userData && (
+              <Avatar 
+                sx={{ 
+                  width: 32, 
+                  height: 32,
+                  bgcolor: '#1abc9c'
+                }}
+              >
+                {userData.username[0].toUpperCase()}
+              </Avatar>
+            )}
+          </Box>
+        </Toolbar>
+      </Container>
+
+      {/* Mobile Menu Items */}
       <Menu
-        anchorEl={anchorEl}
-        id="account-menu"
-        open={open}
-        onClose={handleClose}
-        onClick={handleClose}
-        slotProps={{
-          paper: {
-            elevation: 0,
-            sx: {
-              overflow: 'visible',
-              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-              mt: 1.5,
-              '& .MuiAvatar-root': {
-                width: 32,
-                height: 32,
-                ml: -0.5,
-                mr: 1,
-              },
-              '&::before': {
-                content: '""',
-                display: 'block',
-                position: 'absolute',
-                top: 0,
-                right: 14,
-                width: 10,
-                height: 10,
-                bgcolor: 'background.paper',
-                transform: 'translateY(-50%) rotate(45deg)',
-                zIndex: 0,
-              },
-            },
-          },
+        anchorEl={mobileMoreAnchorEl}
+        open={isMobileMenuOpen}
+        onClose={handleMobileMenuClose}
+        PaperProps={{
+          sx: {
+            width: '200px',
+            mt: 1.5
+          }
         }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose}>
-          <Avatar /> Profile
+        <MenuItem onClick={handleMobileMenuClose} component={Link} to="/">
+          <HomeIcon sx={{ mr: 1 }} /> Inicio
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Avatar /> My account
+        <MenuItem onClick={handleMobileMenuClose} component={Link} to={userData ? `/user/${userData.username}` : '/login'}>
+          <AccountCircleIcon sx={{ mr: 1 }} /> Mi Perfil
         </MenuItem>
-        <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <PersonAdd fontSize="small" />
-          </ListItemIcon>
-          Add another account
+        <MenuItem onClick={handleMobileMenuClose} component={Link} to="/dashboard">
+          <DashboardIcon sx={{ mr: 1 }} /> Dashboard
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
+        {!userData && (
+          <>
+            <MenuItem onClick={handleMobileMenuClose} component={Link} to="/login">
+              <LoginIcon sx={{ mr: 1 }} /> Iniciar Sesión
+            </MenuItem>
+            <MenuItem onClick={handleMobileMenuClose} component={Link} to="/register">
+              <PersonAddIcon sx={{ mr: 1 }} /> Registrarse
+            </MenuItem>
+          </>
+        )}
       </Menu>
-    </React.Fragment>
+    </AppBar>
   );
 }
