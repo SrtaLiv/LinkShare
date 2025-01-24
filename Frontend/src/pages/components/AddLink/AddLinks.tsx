@@ -1,36 +1,58 @@
 import React, { useState } from 'react';
 import {
-    Button,
     Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    TextField,
+    IconButton,
     FormControl,
     InputLabel,
     Select,
     MenuItem,
-    Box,
-    IconButton
+    TextField,
+    SelectChangeEvent
 } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CloseIcon from '@mui/icons-material/Close';
 import api from '../../../utils/axios';
 
-export const AddLinkBTN = () => {
-    const [open, setOpen] = useState(false);
-    const [formData, setFormData] = useState({
-        link: '',
-        platform: ''
-    });
+// Tipos
+interface FormData {
+    link: string;
+    platform: string;
+}
+
+// Constantes
+const INITIAL_FORM_STATE: FormData = {
+    link: '',
+    platform: ''
+};
+
+const PLATFORMS = [
+    'Instagram',
+    'Twitter',
+    'LinkedIn',
+    'GitHub',
+    'YouTube',
+    'Facebook',
+    'TikTok',
+    'Personal Website',
+    'Other'
+] as const;
+
+export const AddLinkBTN: React.FC = () => {
+    const [open, setOpen] = useState<boolean>(false);
+    const [formData, setFormData] = useState<FormData>(INITIAL_FORM_STATE);
 
     const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const handleClose = () => {
+        setOpen(false);
+        setFormData(INITIAL_FORM_STATE);
+    };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent
+    ) => {
         const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
+        setFormData(prev => ({
+            ...prev,
             [name]: value,
         }));
     };
@@ -44,141 +66,123 @@ export const AddLinkBTN = () => {
             });
 
             console.log('Link guardado exitosamente:', response.data);
-            setFormData({ link: '', platform: '' });
             handleClose();
         } catch (error) {
             console.error('Error al guardar el link:', error);
         }
     };
 
-    const platforms = [
-        'Instagram',
-        'Twitter',
-        'LinkedIn',
-        'GitHub',
-        'YouTube',
-        'Facebook',
-        'TikTok',
-        'Personal Website',
-        'Other'
-    ];
-
     return (
         <>
-            <Button
-                variant="contained"
+            <button
                 onClick={handleOpen}
-                startIcon={<AddCircleIcon />}
-                sx={{
-                    backgroundColor: '#14b8a6',
-                    color: 'white',
-                    borderRadius: '24px',
-                    padding: '16px 24px',
-                    textTransform: 'none',
-                    fontSize: '1rem',
-                    fontWeight: 'bold',
-                    border: '1px solid #14b8a6',
-                    width: '100%',
-                    '&:hover': {
-                        backgroundColor: '#14b8a6',
-                        transform: 'scale(1.05)',
-                        transition: 'all 0.2s ease'
-                    },
-                }}
+                className="group relative w-full flex items-center justify-center px-8 py-5 
+                         bg-gradient-to-r from-teal-400 to-teal-500 
+                         hover:from-teal-500 hover:to-teal-600
+                         text-white font-semibold rounded-2xl
+                         transform transition-all duration-200 ease-in-out
+                         hover:scale-[1.02] hover:shadow-xl
+                         focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
             >
-                AGREGAR LINK
-            </Button>
+                <AddCircleIcon className="mr-3 text-2xl" />
+                <span className="text-xl">Agregar Nuevo Link</span>
+            </button>
 
             <Dialog
                 open={open}
                 onClose={handleClose}
+                maxWidth="sm"
+                fullWidth
                 PaperProps={{
-                    sx: {
-                        borderRadius: '15px',
-                        padding: '10px',
-                        minWidth: '350px'
-                    }
+                    className: "!rounded-3xl overflow-hidden"
                 }}
             >
-                <DialogTitle sx={{
-                    m: 0,
-                    p: 2,
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                }}>
-                    Agregar Nuevo Link
+                <div className="bg-gradient-to-r from-teal-400 to-teal-500 p-6 flex justify-between items-center">
+                    <h2 className="text-white text-2xl font-bold">Agregar Nuevo Link</h2>
                     <IconButton
-                        aria-label="close"
                         onClick={handleClose}
-                        sx={{
-                            color: 'grey.500',
-                            '&:hover': {
-                                color: 'grey.800',
-                            }
-                        }}
+                        className="text-white hover:text-gray-200 transition-colors"
+                        size="large"
                     >
-                        <CloseIcon />
+                        <CloseIcon fontSize="medium" />
                     </IconButton>
-                </DialogTitle>
+                </div>
 
-                <form onSubmit={handleSubmit}>
-                    <DialogContent dividers>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                            <FormControl fullWidth>
-                                <InputLabel id="platform-label">Plataforma</InputLabel>
-                                <Select
-                                    labelId="platform-label"
-                                    name="platform"
-                                    value={formData.platform}
-                                    label="Plataforma"
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    {platforms.map((platform) => (
-                                        <MenuItem key={platform} value={platform}>
-                                            {platform}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-
-                            <TextField
-                                name="link"
-                                label="URL del Link"
-                                type="url"
-                                fullWidth
-                                value={formData.link}
+                <form onSubmit={handleSubmit} className="p-8 bg-white">
+                    <div className="space-y-8">
+                        <FormControl fullWidth>
+                            <InputLabel id="platform-label" className="text-lg">
+                                Plataforma
+                            </InputLabel>
+                            <Select
+                                labelId="platform-label"
+                                name="platform"
+                                value={formData.platform}
+                                label="Plataforma"
                                 onChange={handleChange}
                                 required
-                                placeholder="https://ejemplo.com"
-                            />
-                        </Box>
-                    </DialogContent>
+                                className="rounded-xl text-lg"
+                                sx={{
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        borderRadius: '12px',
+                                    },
+                                }}
+                            >
+                                {PLATFORMS.map((platform) => (
+                                    <MenuItem 
+                                        key={platform} 
+                                        value={platform}
+                                        className="text-lg hover:bg-teal-50"
+                                    >
+                                        {platform}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
 
-                    <DialogActions sx={{ padding: 2 }}>
-                        <Button
-                            onClick={handleClose}
-                            sx={{
-                                color: 'grey.600',
-                                '&:hover': { backgroundColor: 'grey.100' }
+                        <TextField
+                            name="link"
+                            label="URL del Link"
+                            type="url"
+                            fullWidth
+                            value={formData.link}
+                            onChange={handleChange}
+                            required
+                            placeholder="https://ejemplo.com"
+                            className="rounded-xl"
+                            InputProps={{
+                                className: "text-lg rounded-xl"
                             }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: '12px',
+                                },
+                            }}
+                        />
+                    </div>
+
+                    <div className="mt-10 flex justify-end space-x-4">
+                        <button
+                            type="button"
+                            onClick={handleClose}
+                            className="px-8 py-3 rounded-xl text-gray-600 
+                                     hover:bg-gray-100 transition-colors
+                                     font-medium text-lg"
                         >
                             Cancelar
-                        </Button>
-                        <Button
+                        </button>
+                        <button
                             type="submit"
-                            variant="contained"
-                            sx={{
-                                backgroundColor: '#2c3e50',
-                                '&:hover': {
-                                    backgroundColor: '#34495e'
-                                }
-                            }}
+                            className="px-8 py-3 rounded-xl bg-gradient-to-r 
+                                     from-teal-400 to-teal-500 
+                                     hover:from-teal-500 hover:to-teal-600
+                                     text-white font-medium text-lg
+                                     transform transition-all duration-200
+                                     hover:shadow-lg active:scale-95"
                         >
                             Guardar
-                        </Button>
-                    </DialogActions>
+                        </button>
+                    </div>
                 </form>
             </Dialog>
         </>
