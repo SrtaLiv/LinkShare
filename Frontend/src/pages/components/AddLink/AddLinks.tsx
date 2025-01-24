@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CloseIcon from '@mui/icons-material/Close';
+import api from '../../../utils/axios';
 
 export const AddLinkBTN = () => {
     const [open, setOpen] = useState(false);
@@ -37,54 +38,16 @@ export const AddLinkBTN = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-            
-            if (!token) {
-                throw new Error('No hay token de autenticación');
-            }
-
-            console.log('Enviando datos:', {
+            const response = await api.post('/links', {
                 platform: formData.platform.toUpperCase(),
                 link: formData.link
             });
 
-            const response = await fetch('http://localhost:8081/api/links', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    platform: formData.platform.toUpperCase(),
-                    link: formData.link
-                }),
-            });
-
-            console.log('Status:', response.status);
-            
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => null);
-                console.log('Error data:', errorData);
-                
-                if (response.status === 401) {
-                    throw new Error('No autorizado. Por favor, inicie sesión nuevamente.');
-                }
-                if (response.status === 400) {
-                    throw new Error('Datos inválidos. Por favor revise la información.');
-                }
-                throw new Error(`Error al guardar el link: ${errorData?.message || response.statusText}`);
-            }
-
-            const data = await response.json();
-            console.log('Link guardado exitosamente:', data);
+            console.log('Link guardado exitosamente:', response.data);
+            setFormData({ link: '', platform: '' });
             handleClose();
         } catch (error) {
-            console.error('Error completo:', error);
-            if (error instanceof Error) {
-                console.error('Mensaje de error:', error.message);
-            }
-            // Aquí podrías agregar un estado para mostrar el error al usuario
-            // setError(error.message);
+            console.error('Error al guardar el link:', error);
         }
     };
 
