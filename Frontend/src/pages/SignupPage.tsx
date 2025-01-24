@@ -19,7 +19,8 @@ export const LoginPage = () => {
             console.log('Token:', token);
             localStorage.setItem('authToken', token); // Guardar el token en localStorage
             navigate(`/dashboard`); // Redirigir al dashboard
-        } 
+            window.location.reload();
+        }
         catch (error) {
             console.error('Error during login:', error);
         }
