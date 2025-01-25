@@ -51,7 +51,6 @@ export const HomePage = () => {
                     </div>
                 </div>
                 <div className="flex flex-col gap-4 mt-8">
-                    <AddLinkBTN />
                     <LinksByUser username={username} />
                 </div>
             </div>

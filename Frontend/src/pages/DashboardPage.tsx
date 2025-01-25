@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Avatar, Button, Paper, Container, Typography, Box, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import LinksByUser from './LinksPage';
+import { AddLinkBTN } from './components/AddLink/AddLinks';
 
 export const DashboardPage = () => {
     const [user, setUser] = useState(null);
@@ -30,21 +32,14 @@ export const DashboardPage = () => {
         fetchUserData();
     }, [navigate]);
 
-    const handleLogout = () => {
-        localStorage.removeItem('authToken'); // Eliminar el token
-        navigate('/login'); // Redirigir al login
-    };
-
     return (
         <Container maxWidth="sm" sx={{ py: 8 }}>
             {user ? (
-                <Paper elevation={3} sx={{
+                <Box sx={{
                     p: 4,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    borderRadius: 2,
-                    background: 'linear-gradient(to bottom, #ffffff, #f5f5f5)'
                 }}>
                     <Avatar
                         alt="avatar"
@@ -61,7 +56,7 @@ export const DashboardPage = () => {
                         @{user.username}
                     </Typography>
                     <Divider sx={{ width: '100%', my: 2 }} />
-                    
+
                     <Box sx={{ width: '100%', mb: 3 }}>
                         <Typography variant="subtitle1" sx={{ color: '#555', mb: 1 }}>
                             <strong>Email:</strong>
@@ -71,29 +66,21 @@ export const DashboardPage = () => {
                         </Typography>
                     </Box>
 
-                    <Button 
-                        onClick={handleLogout} 
-                        variant="contained" 
-                        sx={{
-                            mt: 2,
-                            bgcolor: '#f44336',
-                            '&:hover': {
-                                bgcolor: '#d32f2f'
-                            },
-                            px: 4,
-                            py: 1,
-                            borderRadius: 2,
-                            textTransform: 'none',
-                            fontSize: '1rem'
-                        }}
-                    >
-                        Cerrar Sesión
-                    </Button>
-                </Paper>
+                    <Box sx={{
+                        width: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2,
+                        mt: 2
+                    }}>
+                        <AddLinkBTN />
+                        <LinksByUser username={user.username} showActions={true} />
+                    </Box>
+                </Box>
             ) : (
-                <Box sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'center', 
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
                     alignItems: 'center',
                     minHeight: '50vh'
                 }}>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { AddLinkBTN } from './components/AddLink/AddLinks';
 
 const Dashboard = () => {
   const [links, setLinks] = useState<{ platform: string; link: string; id: string }[]>([]);
@@ -94,6 +95,7 @@ const Dashboard = () => {
           >
             Agregar Link
           </button>
+
           <button
             onClick={() => setIsPreview(!isPreview)}
             className="py-2 px-4 bg-purple-500 text-white rounded-lg hover:bg-purple-600"
