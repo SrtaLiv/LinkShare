@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Avatar, Button, Paper, Container, Typography, Box, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LinksByUser from './LinksPage';
-import { AddLinkBTN } from './components/AddLink/AddLinks';
+import { AddLinkBTN } from './components/Links/AddLinks';
 
 export const DashboardPage = () => {
     const [user, setUser] = useState(null);
