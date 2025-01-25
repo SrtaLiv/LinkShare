@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Button, OutlinedInput } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { GoogleAuth } from './components/GoogleAuth';
+// import { GoogleAuth } from './components/GoogleAuth';
 
 export const LoginPage = () => {
     const [email, setEmail] = useState('');
