@@ -1,5 +1,7 @@
 package com.login.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,5 +25,7 @@ public class Link {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
+    @JsonBackReference // Evita serializar el usuario en bucles
+    @JsonIgnore
     private UserSec usuario;
 }
