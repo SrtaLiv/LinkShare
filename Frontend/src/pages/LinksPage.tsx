@@ -39,12 +39,10 @@ const LinksByUser = ({ username, showActions = false }) => {
     api
       .get(`/links/user/${username}`)
       .then((response) => {
-        console.log('Respuesta del backend:', response.data);
         const linksConId = response.data.map((link: any) => ({
           ...link,
           id: link.id || null
         }));
-        console.log('Links procesados:', linksConId);
         setLinks(linksConId);
       })
       .catch((error) => console.error("Error fetching links:", error));
