@@ -1,16 +1,14 @@
-import { AddLink, MoreHoriz, NotificationsNone } from "@mui/icons-material";
+import { NotificationsNone, MoreHoriz } from "@mui/icons-material";
 import LinksByUser from "./LinksPage";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { AddLinkBTN } from "./components/AddLink/AddLinks";
+import { useEffect } from "react";
 import { useAuth } from "./auth/AuthProvider";
 
 export const HomePage = () => {
     const { username } = useParams();
     const { user } = useAuth();
     const navigate = useNavigate();
-    const [userData, setUserData] = useState(null);
 
     useEffect(() => {
         if (user && user.username) {
@@ -18,24 +16,17 @@ export const HomePage = () => {
         }
     }, [user, navigate]);
 
-    useEffect(() => {
-        if (username) {
-            axios
-                .get(`http://localhost:8081/api/links/user/${username}`)
-                .then((response) => setUserData(response.data))
-                .catch((error) => console.error("Error fetching user data:", error));
-        }
-    }, [username]);
-
     return (
         <main className="w-full min-h-screen flex bg-teal-100">
-
             <div className="w-[90%] md:w-[33%] mx-auto py-8">
                 <div className="flex flex-col">
-
                     <div className="flex flex-row w-full justify-between">
-                        <button className="size-10 bg-black/25 rounded-full"><NotificationsNone className="text-white" /></button>
-                        <button className="size-10 bg-black/25 rounded-full"><MoreHoriz className="text-white" /></button>
+                        <button className="size-10 bg-black/25 rounded-full">
+                            <NotificationsNone className="text-white" />
+                        </button>
+                        <button className="size-10 bg-black/25 rounded-full">
+                            <MoreHoriz className="text-white" />
+                        </button>
                     </div>
 
                     <div className="flex flex-col items-center justify-center gap-4">
@@ -45,7 +36,6 @@ export const HomePage = () => {
 
                         <div className="flex flex-col items-center gap-1 max-w-[75%]">
                             <h1 className="text-2xl text-center font-bold text-teal-900">{`@${username}`}</h1>
-
                             <p className="text-xl text-center text-teal-700">Hola! Soy Oli, me encanta la programación, la productividad y subir contenido :)</p>
                         </div>
                     </div>
@@ -54,7 +44,6 @@ export const HomePage = () => {
                     <LinksByUser username={username} />
                 </div>
             </div>
-
         </main>
     );
 }

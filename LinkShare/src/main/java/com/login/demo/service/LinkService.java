@@ -40,12 +40,16 @@ public class LinkService implements ILinkService {
     public void update(Link link) {
         linkRepository.save(link);
     }
-
+    
     @Override
     public List<LinkDTO> findLinksByUsuario(String username) {
         List<Link> links = linkRepository.findByUsuarioUsername(username);
         return links.stream()
-                .map(link -> new LinkDTO(link.getLink(), link.getPlatform()))
+                .map(link -> new LinkDTO(
+                        link.getId(),
+                        link.getLink(),
+                        link.getPlatform()
+                ))
                 .collect(Collectors.toList());
     }
 

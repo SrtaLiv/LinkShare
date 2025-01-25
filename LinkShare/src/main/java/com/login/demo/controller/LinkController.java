@@ -98,12 +98,32 @@ public class LinkController {
         return ResponseEntity.ok(updatedLink);
     }
 
+    /*
     @PreAuthorize("hasAnyRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLink(@PathVariable Long id) {
         linkService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }*/
+    @PreAuthorize("hasAnyRole('USER')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteLink(@PathVariable Long id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Link> linkOpt = linkService.findById(id);
+
+        if (linkOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Link link = linkOpt.get();
+        if (!link.getUsuario().getEmail().equals(username)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        linkService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
+
 
 }
 

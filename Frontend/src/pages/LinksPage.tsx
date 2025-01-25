@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { IconButton, Box, Dialog, TextField, FormControl, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
+import api from '../utils/axios';
+import { IconButton, Box } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CloseIcon from '@mui/icons-material/Close';
+import { EditLinkModal } from "./components/Links/EditLinkModal";
+import { DeleteLinkModal } from "./components/Links/DeleteLinkModal";
 
 const PLATFORMS = [
     'Instagram',
@@ -18,9 +19,9 @@ const PLATFORMS = [
 ] as const;
 
 interface LinkData {
+  id: number;
   platform: string;
   link: string;
-  id: string;
 }
 
 const LinksByUser = ({ username, showActions = false }) => {
@@ -35,27 +36,37 @@ const LinksByUser = ({ username, showActions = false }) => {
   }, [username]);
 
   const fetchLinks = () => {
-    axios
-      .get(`http://localhost:8081/api/links/user/${username}`)
-      .then((response) => setLinks(response.data))
+    api
+      .get(`/links/user/${username}`)
+      .then((response) => {
+        console.log('Respuesta del backend:', response.data);
+        const linksConId = response.data.map((link: any) => ({
+          ...link,
+          id: link.id || null
+        }));
+        console.log('Links procesados:', linksConId);
+        setLinks(linksConId);
+      })
       .catch((error) => console.error("Error fetching links:", error));
   };
 
   const handleEdit = (link: LinkData) => {
+    if (!link) return;
     setSelectedLink(link);
     setEditFormData(link);
     setEditModalOpen(true);
   };
-
+  
   const handleDelete = (link: LinkData) => {
+    if (!link) return;
     setSelectedLink(link);
     setDeleteModalOpen(true);
   };
-
+  
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:8081/api/links/${editFormData.id}`, {
+      await api.put(`/links/${editFormData.id}`, {
         platform: editFormData.platform.toUpperCase(),
         link: editFormData.link
       });
@@ -67,20 +78,20 @@ const LinksByUser = ({ username, showActions = false }) => {
   };
 
   const handleDeleteConfirm = async () => {
-    if (selectedLink) {
-      try {
-        await axios.delete(`http://localhost:8081/api/links/${selectedLink.id}`);
+    if (!selectedLink?.id) return;
+
+    try {
+      const response = await api.delete(`/links/${selectedLink.id}`);
+      if (response.status === 204) {
         setDeleteModalOpen(false);
         fetchLinks();
-      } catch (error) {
-        console.error('Error al eliminar el link:', error);
       }
+    } catch (error) {
+      console.error('Error al eliminar:', error);
     }
   };
-
-  const handleEditChange = (
-    e: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent
-  ) => {
+  
+  const handleEditChange = (e: any) => {
     const { name, value } = e.target;
     setEditFormData(prev => ({
       ...prev,
@@ -131,155 +142,20 @@ const LinksByUser = ({ username, showActions = false }) => {
         ))}
       </ul>
 
-      {/* Modal de Edición */}
-      <Dialog
+      <EditLinkModal
         open={editModalOpen}
         onClose={() => setEditModalOpen(false)}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          className: "!rounded-3xl overflow-hidden"
-        }}
-      >
-        <div className="bg-gradient-to-r from-teal-400 to-teal-500 p-6 flex justify-between items-center">
-          <h2 className="text-white text-2xl font-bold">Editar Link</h2>
-          <IconButton
-            onClick={() => setEditModalOpen(false)}
-            className="text-white hover:text-gray-200 transition-colors"
-            size="large"
-          >
-            <CloseIcon fontSize="medium" />
-          </IconButton>
-        </div>
+        editFormData={editFormData}
+        handleEditChange={handleEditChange}
+        handleEditSubmit={handleEditSubmit}
+      />
 
-        <form onSubmit={handleEditSubmit} className="p-8 bg-white">
-          <div className="space-y-8">
-            <FormControl fullWidth>
-              <InputLabel id="platform-label" className="text-lg">
-                Plataforma
-              </InputLabel>
-              <Select
-                labelId="platform-label"
-                name="platform"
-                value={editFormData.platform}
-                label="Plataforma"
-                onChange={handleEditChange}
-                required
-                className="rounded-xl text-lg"
-                sx={{
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderRadius: '12px',
-                  },
-                }}
-              >
-                {PLATFORMS.map((platform) => (
-                  <MenuItem 
-                    key={platform} 
-                    value={platform}
-                    className="text-lg hover:bg-teal-50"
-                  >
-                    {platform}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <TextField
-              name="link"
-              label="URL del Link"
-              type="url"
-              fullWidth
-              value={editFormData.link}
-              onChange={handleEditChange}
-              required
-              placeholder="https://ejemplo.com"
-              className="rounded-xl"
-              InputProps={{
-                className: "text-lg rounded-xl"
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '12px',
-                },
-              }}
-            />
-          </div>
-
-          <div className="mt-10 flex justify-end space-x-4">
-            <button
-              type="button"
-              onClick={() => setEditModalOpen(false)}
-              className="px-8 py-3 rounded-xl text-gray-600 
-                       hover:bg-gray-100 transition-colors
-                       font-medium text-lg"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="px-8 py-3 rounded-xl bg-gradient-to-r 
-                       from-teal-400 to-teal-500 
-                       hover:from-teal-500 hover:to-teal-600
-                       text-white font-medium text-lg
-                       transform transition-all duration-200
-                       hover:shadow-lg active:scale-95"
-            >
-              Guardar
-            </button>
-          </div>
-        </form>
-      </Dialog>
-
-      {/* Modal de Eliminación */}
-      <Dialog
+      <DeleteLinkModal
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          className: "!rounded-3xl overflow-hidden"
-        }}
-      >
-        <div className="bg-gradient-to-r from-red-400 to-red-500 p-6 flex justify-between items-center">
-          <h2 className="text-white text-2xl font-bold">Eliminar Link</h2>
-          <IconButton
-            onClick={() => setDeleteModalOpen(false)}
-            className="text-white hover:text-gray-200 transition-colors"
-            size="large"
-          >
-            <CloseIcon fontSize="medium" />
-          </IconButton>
-        </div>
-
-        <div className="p-8 bg-white">
-          <p className="text-lg text-gray-700 mb-8">
-            ¿Estás seguro que deseas eliminar este link de {selectedLink?.platform}?
-          </p>
-
-          <div className="flex justify-end space-x-4">
-            <button
-              type="button"
-              onClick={() => setDeleteModalOpen(false)}
-              className="px-8 py-3 rounded-xl text-gray-600 
-                       hover:bg-gray-100 transition-colors
-                       font-medium text-lg"
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={handleDeleteConfirm}
-              className="px-8 py-3 rounded-xl bg-gradient-to-r 
-                       from-red-400 to-red-500 
-                       hover:from-red-500 hover:to-red-600
-                       text-white font-medium text-lg
-                       transform transition-all duration-200
-                       hover:shadow-lg active:scale-95"
-            >
-              Eliminar
-            </button>
-          </div>
-        </div>
-      </Dialog>
+        platformName={selectedLink?.platform}
+        onConfirm={handleDeleteConfirm}
+      />
     </div>
   );
 };
