@@ -20,15 +20,6 @@ export const HomePage = () => {
         <main className="w-full min-h-screen flex bg-teal-100">
             <div className="w-[90%] md:w-[33%] mx-auto py-8">
                 <div className="flex flex-col">
-                    <div className="flex flex-row w-full justify-between">
-                        <button className="size-10 bg-black/25 rounded-full">
-                            <NotificationsNone className="text-white" />
-                        </button>
-                        <button className="size-10 bg-black/25 rounded-full">
-                            <MoreHoriz className="text-white" />
-                        </button>
-                    </div>
-
                     <div className="flex flex-col items-center justify-center gap-4">
                         <div className="rounded-full size-24 bg-slate-500 overflow-hidden">
                             <img src="https://ugc.production.linktr.ee/a85ceb97-98c0-4108-b0ee-b2b39fb606a8_WhatsApp-Image-2024-02-22-at-16.03.47.jpeg?io=true&size=avatar-v3_0" />

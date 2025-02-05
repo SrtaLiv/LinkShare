@@ -67,6 +67,7 @@ export const AddLinkBTN: React.FC = () => {
 
             console.log('Link guardado exitosamente:', response.data);
             handleClose();
+            window.location.reload();
         } catch (error) {
             console.error('Error al guardar el link:', error);
         }

@@ -11,6 +11,7 @@ export const RegisterPage = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [username, setusername] = useState('');
+    const [avatar, setAvatar] = useState('');
     const navigate = useNavigate();
 
     // Function to handle registration
@@ -19,22 +20,30 @@ export const RegisterPage = () => {
             alert("Passwords do not match!");
             return;
         }
-        
+
         const userRequest = {
             email,
             password,
-            username
+            username,
+            avatar
         };
 
         try {
             const response = await axios.post('http://localhost:8081/auth/signup', userRequest);
             console.log('Registration successful:', response.data);
-            navigate(`/verification/${username}`);          // Handle successful registration (e.g., redirect to dashboard or show a success message)
+            // navigate(`/verification/${username}`);          // Handle successful registration (e.g., redirect to dashboard or show a success message)
         } catch (error) {
             console.error("Error during registration:", error);
             // Handle error (e.g., show an error message)
         }
     };
+
+    // const handleAvatarChange =  async () => {
+    //     const file = e.target.files?.[0];
+    //     if (file) {
+    //         setAvatar(URL.createObjectURL(file));
+    //     }
+    // };
 
     return (
         <main className="w-full min-h-screen flex items-center">
@@ -48,37 +57,37 @@ export const RegisterPage = () => {
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-2">
                             <label className="text-neutral-500 text-base">Email</label>
-                            <OutlinedInput 
-                                placeholder="example@email.com" 
-                                className="h-10" 
-                                value={email} 
-                                onChange={(e) => setEmail(e.target.value)} 
+                            <OutlinedInput
+                                placeholder="example@email.com"
+                                className="h-10"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
 
                         <div className="flex flex-col gap-2">
                             <label className="text-neutral-500 text-base">Password</label>
-                            <OutlinedInput 
-                                type="password" 
-                                placeholder="kittens!123" 
-                                className="h-10" 
-                                value={password} 
-                                onChange={(e) => setPassword(e.target.value)} 
+                            <OutlinedInput
+                                type="password"
+                                placeholder="kittens!123"
+                                className="h-10"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                             />
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <label className="text-neutral-500 text-base">Repeat your password</label>
-                            <OutlinedInput 
-                                type="password" 
-                                placeholder="kittens!123" 
-                                className="h-10" 
-                                value={confirmPassword} 
-                                onChange={(e) => setConfirmPassword(e.target.value)} 
+                            <label className="text-neutral-500 text-base">Repite tu contraseña</label>
+                            <OutlinedInput
+                                type="password"
+                                placeholder="kittens!123"
+                                className="h-10"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                             />
                         </div>
 
-                        <Button onClick={() => setStep(2)} variant="contained" className="bg-indigo-500 text-white flex-1">Continue</Button>
+                        <Button onClick={() => setStep(2)} variant="contained" className="bg-indigo-500 text-white flex-1">Continuar</Button>
                     </div>
                 )}
 
@@ -86,21 +95,24 @@ export const RegisterPage = () => {
                     <div>
                         {/* Avatar and Display Name Input */}
                         <div className="flex flex-col md:flex-row items-center gap-8 mt-8">
+
+                            {/* SUBIR AVATAR */}
                             <div className="flex flex-col gap-2">
                                 <label className="text-neutral-500 text-base">Avatar</label>
                                 <div className="border-2 border-dashed border-indigo-300 rounded-sm size-32 items-center justify-center flex flex-col gap-1">
                                     <AddAPhoto className="text-indigo-500" fontSize="large" />
-                                    <label className="text-indigo-500">Add a photo</label>
+                                    <label className="text-indigo-500">Agregar foto</label>
                                 </div>
                             </div>
+
                             <div className="flex flex-col gap-2 justify-between flex-1">
                                 <div className="flex flex-col gap-2">
                                     <label className="text-neutral-500 text-base">Name to display</label>
-                                    <OutlinedInput 
-                                        placeholder="@davidkim_" 
-                                        className="h-12" 
-                                        value={username} 
-                                        onChange={(e) => setusername(e.target.value)} 
+                                    <OutlinedInput
+                                        placeholder="@davidkim_"
+                                        className="h-12"
+                                        value={username}
+                                        onChange={(e) => setusername(e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -108,8 +120,8 @@ export const RegisterPage = () => {
 
                         {/* Buttons for Back and Register */}
                         <div className="flex mt-4 gap-4">
-                            <Button onClick={() => setStep(1)} variant="contained" className="bg-indigo-500 text-white flex-1">Back</Button>
-                            <Button onClick={handleRegister} variant="contained" className="bg-indigo-500 text-white flex-1">Register</Button>
+                            <Button onClick={() => setStep(1)} variant="contained" className="bg-indigo-500 text-white flex-1">Volver</Button>
+                            <Button onClick={handleRegister} variant="contained" className="bg-indigo-500 text-white flex-1">Registrarse</Button>
                         </div>
                     </div>
                 )}

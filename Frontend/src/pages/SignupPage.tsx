@@ -14,7 +14,9 @@ export const LoginPage = () => {
 
         try {
             const response = await axios.post('http://localhost:8081/auth/login', userRequest);
+            console.log('Respuesta del servidor:', response.data);
             const token = response.data.jwt; // Backend debería devolver el token aquí
+            
             console.log('Token recibido:', token); // debug
             console.log('Token:', token);
             localStorage.setItem('authToken', token); // Guardar el token en localStorage

@@ -97,13 +97,13 @@ export default function Navbar() {
                             </IconButton>
                         )}
                         
-                        <Link to="/" className="flex items-center space-x-2">
+                        <Link to="#" className="flex items-center space-x-2">
                             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-400 to-teal-600 
                                         flex items-center justify-center shadow-lg shadow-teal-500/20">
                                 <span className="text-white font-bold text-xl">L</span>
                             </div>
                             <span className="text-gray-700 font-semibold text-xl hidden sm:block">
-                                Links App
+                                Link Share
                             </span>
                         </Link>
                     </div>
