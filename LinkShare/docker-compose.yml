@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: linkshare-mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: fakepassword123
+      MYSQL_DATABASE: linkshare
+    ports:
+      - "3306:3306"
+    volumes:
+      - link-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: linkshare-app
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/linkshare
+      - SPRING_DATASOURCE_USERNAME=fakeuser
+      - SPRING_DATASOURCE_PASSWORD=fakepassword123
+      - SPRING_SECURITY_USER_NAME=fakeuser
+      - SPRING_SECURITY_USER_PASSWORD=fakepassword123
+      - SECURITY_JWT_PRIVATE_KEY=fakeprivatekey123
+      - SECURITY_JWT_USER_GENERATOR=fakegenerator
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_CLIENT_ID=fakegithubid
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_CLIENT_SECRET=fakegithubsecret
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID=fakegoogleid
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET=fakegooglesecret
+      - SPRING_MAIL_USERNAME=fakemail@example.com
+      - SPRING_MAIL_PASSWORD=fakemailpassword
+      - CLOUDINARY_CLOUD_NAME=fakecloudname
+      - CLOUDINARY_API_KEY=fakeapikey123
+      - CLOUDINARY_API_SECRET=fakeapisecret123
+
+volumes:
+  link-db-data:
