@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.login</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>LinkShare</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>springsecurity</name>
+	<name>LinkShare</name>
 	<description>Demo project para spring security</description>
 	<properties>
 		<java.version>17</java.version>
@@ -25,7 +25,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http44</artifactId>
+			<version>1.39.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -51,8 +55,8 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
 			<version>8.0.33</version>
 		</dependency>
 		<dependency>
@@ -90,6 +94,12 @@
 		</dependency>
 	</dependencies>
 	<build>
+		<resources>
+				<resource>
+					<directory>src/main/resources</directory>
+					<filtering>false</filtering>
+				</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

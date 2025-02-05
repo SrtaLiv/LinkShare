@@ -1,3 +1,6 @@
+target/*.jar
+!target/LinkShare-0.0.1.jar
+
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
@@ -31,3 +34,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Variables de entorno
+.env

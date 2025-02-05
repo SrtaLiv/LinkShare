@@ -105,6 +105,7 @@ public class LinkController {
         linkService.deleteById(id);
         return ResponseEntity.noContent().build();
     }*/
+
     @PreAuthorize("hasAnyRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLink(@PathVariable Long id) {

@@ -1,12 +1,16 @@
 package com.login.demo.service;
 
+import com.login.demo.dto.LinkDTO;
+import com.login.demo.models.Image;
 import com.login.demo.models.UserSec;
 import com.login.demo.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +20,9 @@ public class UserSecService implements IUserSecService {
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private IImageService iImageService;
 
     @Override
     public List<UserSec> findAll() {
@@ -56,6 +63,17 @@ public class UserSecService implements IUserSecService {
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         user.setEnabled(true);
         userRepository.save(user);
+    }
+
+
+    @Override
+    public UserSec updateUserImage(UserSec user, MultipartFile file) throws IOException {
+        if (user.getImage() != null){
+            iImageService.deleteImagen(user.getImage());
+        }
+        Image newImg = iImageService.uploadImagen(file);
+        user.setImage(newImg);
+        return userRepository.save(user);
     }
 
 }
