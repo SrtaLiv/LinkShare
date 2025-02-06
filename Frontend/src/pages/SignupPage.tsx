@@ -11,17 +11,19 @@ export const LoginPage = () => {
 
     const handleLogin = async () => {
         const userRequest = { email, password };
-
+        const API_URL = 'http://3.142.131.147/auth/login'; // Reemplaza con la ruta de tu API
         try {
-            const response = await axios.post('http://localhost:8081/auth/login', userRequest);
+            const response = await axios.post(API_URL, userRequest);
             console.log('Respuesta del servidor:', response.data);
             const token = response.data.jwt; // Backend debería devolver el token aquí
             
-            console.log('Token recibido:', token); // debug
             console.log('Token:', token);
+            
             localStorage.setItem('authToken', token); // Guardar el token en localStorage
+            console.log('Token guardado en localStorage:', localStorage.getItem('authToken'));
+
             navigate(`/dashboard`); // Redirigir al dashboard
-            window.location.reload();
+            // window.location.reload();
         }
         catch (error) {
             console.error('Error during login:', error);

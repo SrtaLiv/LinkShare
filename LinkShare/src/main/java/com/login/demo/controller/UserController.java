@@ -36,14 +36,15 @@ public class UserController {
     @Autowired
     private IRoleService roleService;
 
-    @GetMapping("/data")
+    /*@GetMapping("/data")
     public Map<String, Object> userInfo(@AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) {
             throw new IllegalArgumentException("User info is not available");
         }
         return principal.getAttributes();
-    }
+    }*/
 
+    //Obtener información pública del usuario.
     @GetMapping("/info")
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<Map<String, String>> getInfo() {

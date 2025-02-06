@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "http://localhost:5173")
 public class TestAuthController {
 
-        @GetMapping("/sayhi")
-        @PreAuthorize("permitAll()")
-        public String sayHi(){
-            return "Hi! This endpoint is not secured";
-        }
+    @GetMapping("/sayhi")
+    @PreAuthorize("permitAll()")
+    public String sayHi(){
+        return "Hi! This endpoint is not secured";
+    }
 
         @GetMapping("/sayhisec")
         @PreAuthorize("hasAnyRole('USER')")

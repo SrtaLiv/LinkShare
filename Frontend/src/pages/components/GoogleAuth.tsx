@@ -3,14 +3,14 @@ export const GoogleAuth = () => {
     const googleLogin = () => {
         console.log('Iniciando login con Google...');
         try {
-            window.location.href = 'http://localhost:8081/oauth2/authorization/google'; // Adjust this URL based on your configuration¿
+            window.location.href = 'http://3.142.131.147//oauth2/authorization/google'; // Adjust this URL based on your configuration¿
         } catch (error) {
             console.error('Error en Google Login:', error);
         }
     };
 
     const githubLogin = () => {
-        window.location.href = 'http://localhost:8081/oauth2/authorization/github'; // Adjust this URL based on your configuration
+        window.location.href = 'http://3.142.131.147//oauth2/authorization/github'; // Adjust this URL based on your configuration
     };
     return (
         <div>

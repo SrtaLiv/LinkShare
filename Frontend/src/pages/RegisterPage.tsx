@@ -25,11 +25,12 @@ export const RegisterPage = () => {
             email,
             password,
             username,
-            avatar
+            // avatar
         };
 
         try {
-            const response = await axios.post('http://localhost:8081/auth/signup', userRequest);
+            const API_URL ='http://3.142.131.147/auth/signup';
+            const response = await axios.post(API_URL, userRequest);
             console.log('Registration successful:', response.data);
             // navigate(`/verification/${username}`);          // Handle successful registration (e.g., redirect to dashboard or show a success message)
         } catch (error) {
@@ -37,13 +38,6 @@ export const RegisterPage = () => {
             // Handle error (e.g., show an error message)
         }
     };
-
-    // const handleAvatarChange =  async () => {
-    //     const file = e.target.files?.[0];
-    //     if (file) {
-    //         setAvatar(URL.createObjectURL(file));
-    //     }
-    // };
 
     return (
         <main className="w-full min-h-screen flex items-center">

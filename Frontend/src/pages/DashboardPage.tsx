@@ -14,12 +14,13 @@ export const DashboardPage = () => {
             const token = localStorage.getItem('authToken'); // Obtener el token
 
             if (!token) {
-                navigate('/login'); // Redirigir si no hay token
+                console.log('no hay token!')
+                navigate('/login'); 
                 return;
             }
 
             try {
-                const response = await axios.get('http://localhost:8081/api/users/info', {
+                const response = await axios.get('http://3.142.131.147/api/users/info', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setUser(response.data); // Guardar los datos del usuario

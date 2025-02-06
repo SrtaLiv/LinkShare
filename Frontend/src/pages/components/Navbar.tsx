@@ -53,7 +53,7 @@ export default function Navbar() {
             const token = localStorage.getItem('authToken');
             if (token) {
                 try {
-                    const response = await axios.get('http://localhost:8081/api/users/info', {
+                    const response = await axios.get('http://3.142.131.147/api/users/info', {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                     setUserData(response.data);

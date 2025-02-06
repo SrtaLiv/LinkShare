@@ -8,8 +8,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: fakepassword123
       MYSQL_DATABASE: linkshare
-    ports:
-      - "3306:3306"
+#    ports:
+ #     - "3306:3306"
     volumes:
       - link-db-data:/var/lib/mysql
     healthcheck:
@@ -27,7 +27,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "8080:8080"
+      - "80:8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/linkshare
       - SPRING_DATASOURCE_USERNAME=fakeuser

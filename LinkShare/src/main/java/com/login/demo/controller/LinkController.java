@@ -28,7 +28,7 @@ public class LinkController {
     @Autowired
     private IUserSecService userSecService;
 
-    //CUALQUIERA PEUDE VER LOS LINKS DE UN USUARIO
+    //Obtener todos los enlaces públicos de un usuario.
     @GetMapping("/user/{username}")
     public ResponseEntity<List<LinkDTO>> findLinksByUsuario(@PathVariable String username){
        List<LinkDTO> linkList = linkService.findLinksByUsuario(username);
@@ -49,7 +49,7 @@ public class LinkController {
         return ResponseEntity.ok(linkList);
     }
 
-    //debemos asociar cada link al usuario autenticado, como=?
+    //Agregar un nuevo enlace (requiere autenticación)
     @PostMapping
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<LinkResponseDTO> createLink(@Valid @RequestBody LinkDTO linkUserDTO) {
@@ -97,14 +97,6 @@ public class LinkController {
 
         return ResponseEntity.ok(updatedLink);
     }
-
-    /*
-    @PreAuthorize("hasAnyRole('USER')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLink(@PathVariable Long id) {
-        linkService.deleteById(id);
-        return ResponseEntity.noContent().build();
-    }*/
 
     @PreAuthorize("hasAnyRole('USER')")
     @DeleteMapping("/{id}")
