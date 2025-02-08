@@ -2,10 +2,7 @@ package com.login.demo.service;
 
 import com.login.demo.dto.LinkDTO;
 import com.login.demo.models.Link;
-import com.login.demo.models.UserSec;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Avatar, Button, Paper, Container, Typography, Box, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LinksByUser from './LinksPage';
-import { AddLinkBTN } from './components/Links/AddLinks';
+import { AddLinkBTN } from '../components/Links/AddLinks';
 
 export const DashboardPage = () => {
     const [user, setUser] = useState(null);
@@ -20,7 +20,7 @@ export const DashboardPage = () => {
             }
 
             try {
-                const response = await axios.get('http://3.142.131.147/api/users/info', {
+                const response = await axios.get('http://localhost:8080/api/users/info', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 setUser(response.data); // Guardar los datos del usuario

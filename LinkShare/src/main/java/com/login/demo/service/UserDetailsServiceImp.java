@@ -91,7 +91,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
         return authResponseDTO;
     }
 
-    public UserSec signupUser(RegisterUserDto registerUserDto) {
+    public RegisterUserDto signupUser(RegisterUserDto registerUserDto) {
         UserSec newUser = new UserSec();
         newUser.setEmail(registerUserDto.getEmail());
         newUser.setUsername(registerUserDto.getUsername());
@@ -112,7 +112,12 @@ public class UserDetailsServiceImp implements UserDetailsService {
         ConfirmationToken confirmationToken = confirmationTokenService.generateToken(newUser);
         emailService.sendVerificationEmail(confirmationToken);
 
-        return savedUser;
+        // Convertir a UserResponseDto antes de devolver
+        RegisterUserDto responseDto = new RegisterUserDto();
+        responseDto.setEmail(savedUser.getEmail());
+        responseDto.setUsername(savedUser.getUsername());
+
+        return responseDto;
     }
 
     public Authentication authenticate(String username, String password) {

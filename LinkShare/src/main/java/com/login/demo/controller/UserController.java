@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.text.ParseException;
@@ -49,13 +50,8 @@ public class UserController {
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<Map<String, String>> getInfo() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<UserSec> userOpt = userService.findByEmail(username);
-
-        if (userOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        UserSec user = userOpt.get();
+        UserSec user = userService.findByEmail(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
 
         Map<String, String> userInfo = new HashMap<>();
         userInfo.put("username", user.getUsername());

@@ -3,8 +3,8 @@ import api from '../utils/axios';
 import { IconButton, Box } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { EditLinkModal } from "./components/Links/EditLinkModal";
-import { DeleteLinkModal } from "./components/Links/DeleteLinkModal";
+import { EditLinkModal } from "../components/Links/EditLinkModal";
+import { DeleteLinkModal } from "../components/Links/DeleteLinkModal";
 
 const PLATFORMS = [
     'Instagram',

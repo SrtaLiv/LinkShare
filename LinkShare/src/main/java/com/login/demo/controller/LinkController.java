@@ -29,7 +29,7 @@ public class LinkController {
     private IUserSecService userSecService;
 
     //Obtener todos los enlaces públicos de un usuario.
-    @GetMapping("/user/{username}")
+    @GetMapping("/{username}")
     public ResponseEntity<List<LinkDTO>> findLinksByUsuario(@PathVariable String username){
        List<LinkDTO> linkList = linkService.findLinksByUsuario(username);
         return ResponseEntity.ok(linkList);
@@ -83,13 +83,21 @@ public class LinkController {
     @PreAuthorize("hasAnyRole('USER')")
     @PutMapping("/{id}")
     public ResponseEntity<Link> updateLink(@PathVariable Long id, @RequestBody LinkDTO linkDTO) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Link> existingLinkOpt = linkService.findById(id);
 
         if (existingLinkOpt.isEmpty()) {
              return ResponseEntity.notFound().build();
         }
+
         Link existingLink = existingLinkOpt.get();
 
+        // Verificar que el link pertenece al usuario autenticado
+        if (!existingLink.getUsuario().getEmail().equals(username)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        // Actualizar los datos del enlace
         existingLink.setLink(linkDTO.getLink());
         existingLink.setPlatform(linkDTO.getPlatform());
 
@@ -98,10 +106,11 @@ public class LinkController {
         return ResponseEntity.ok(updatedLink);
     }
 
+    //falta testear
     @PreAuthorize("hasAnyRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLink(@PathVariable Long id) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserSec user = getAuthenticatedUser();
         Optional<Link> linkOpt = linkService.findById(id);
 
         if (linkOpt.isEmpty()) {
@@ -109,12 +118,18 @@ public class LinkController {
         }
 
         Link link = linkOpt.get();
-        if (!link.getUsuario().getEmail().equals(username)) {
+        if (!link.getUsuario().equals(user)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         linkService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private UserSec getAuthenticatedUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userSecService.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
 

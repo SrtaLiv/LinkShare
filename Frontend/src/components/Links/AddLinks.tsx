@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CloseIcon from '@mui/icons-material/Close';
-import api from '../../../utils/axios';
+import api from '../../utils/axios';
 
 // Tipos
 interface FormData {
@@ -130,8 +130,8 @@ export const AddLinkBTN: React.FC = () => {
                                 }}
                             >
                                 {PLATFORMS.map((platform) => (
-                                    <MenuItem 
-                                        key={platform} 
+                                    <MenuItem
+                                        key={platform}
                                         value={platform}
                                         className="text-lg hover:bg-teal-50"
                                     >

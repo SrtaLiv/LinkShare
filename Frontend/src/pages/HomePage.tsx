@@ -3,19 +3,25 @@ import LinksByUser from "./LinksPage";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
-import { useAuth } from "./auth/AuthProvider";
+import { useGlobalContext } from "../context/GlobalContext";
 
 export const HomePage = () => {
     const { username } = useParams();
-    const { user } = useAuth();
+    const { user } = useGlobalContext();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (user && user.username) {
+        if (!user) {
+            navigate(`/`);
+        }
+        else if (user.username) {
             navigate(`/user/${user.username}`);
         }
     }, [user, navigate]);
 
+    if (!user) {
+        return null; // Evita renderizar contenido antes de redirigir
+    }
     return (
         <main className="w-full min-h-screen flex bg-teal-100">
             <div className="w-[90%] md:w-[33%] mx-auto py-8">
