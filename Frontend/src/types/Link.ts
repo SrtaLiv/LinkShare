@@ -1,5 +1,6 @@
 export interface Link {
-    id: string;
+    // id: string;
     platform: string;
     link: string;
+    userId: number
 }

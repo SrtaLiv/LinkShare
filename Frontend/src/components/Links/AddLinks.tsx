@@ -11,16 +11,11 @@ import {
 } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CloseIcon from '@mui/icons-material/Close';
-import api from '../../utils/axios';
+import { createLink } from '../../services/api';
+import { Link } from '../../types/Link';
+import { useGlobalContext } from '../../context/GlobalContext';
 
-// Tipos
-interface FormData {
-    link: string;
-    platform: string;
-}
-
-// Constantes
-const INITIAL_FORM_STATE: FormData = {
+const INITIAL_FORM_STATE = {
     link: '',
     platform: ''
 };
@@ -38,8 +33,10 @@ const PLATFORMS = [
 ] as const;
 
 export const AddLinkBTN: React.FC = () => {
-    const [open, setOpen] = useState<boolean>(false);
-    const [formData, setFormData] = useState<FormData>(INITIAL_FORM_STATE);
+    const [open, setOpen] = useState(false);
+    const [formData, setFormData] = useState(INITIAL_FORM_STATE);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { user } = useGlobalContext();
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
@@ -59,17 +56,25 @@ export const AddLinkBTN: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        try {
-            const response = await api.post('/links', {
-                platform: formData.platform.toUpperCase(),
-                link: formData.link
-            });
+        if (!user) return;
 
-            console.log('Link guardado exitosamente:', response.data);
+        setIsSubmitting(true);
+        try {
+            const linkData: Link = {
+                platform: formData.platform.toUpperCase(),
+                link: formData.link,
+                userId: user.id // Asegúrate de que el tipo User tenga un campo id
+            };
+
+            await createLink(linkData);
             handleClose();
-            window.location.reload();
+            // En lugar de recargar la página, podrías emitir un evento o usar un callback
+            // para actualizar la lista de links
         } catch (error) {
             console.error('Error al guardar el link:', error);
+            // Aquí podrías agregar un toast o notificación de error
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -83,7 +88,9 @@ export const AddLinkBTN: React.FC = () => {
                          text-white font-semibold rounded-2xl
                          transform transition-all duration-200 ease-in-out
                          hover:scale-[1.02] hover:shadow-xl
-                         focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                         focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2
+                         disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isSubmitting}
             >
                 <AddCircleIcon className="mr-3 text-2xl" />
                 <span className="text-xl">Agregar Nuevo Link</span>
@@ -169,6 +176,7 @@ export const AddLinkBTN: React.FC = () => {
                             className="px-8 py-3 rounded-xl text-gray-600 
                                      hover:bg-gray-100 transition-colors
                                      font-medium text-lg"
+                            disabled={isSubmitting}
                         >
                             Cancelar
                         </button>
@@ -179,9 +187,11 @@ export const AddLinkBTN: React.FC = () => {
                                      hover:from-teal-500 hover:to-teal-600
                                      text-white font-medium text-lg
                                      transform transition-all duration-200
-                                     hover:shadow-lg active:scale-95"
+                                     hover:shadow-lg active:scale-95
+                                     disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled={isSubmitting}
                         >
-                            Guardar
+                            {isSubmitting ? 'Guardando...' : 'Guardar'}
                         </button>
                     </div>
                 </form>
