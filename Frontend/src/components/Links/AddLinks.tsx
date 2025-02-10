@@ -62,14 +62,12 @@ export const AddLinkBTN: React.FC = () => {
         try {
             const linkData: Link = {
                 platform: formData.platform.toUpperCase(),
-                link: formData.link,
-                userId: user.id // Asegúrate de que el tipo User tenga un campo id
+                link: formData.link,  // Asegúrate de que en tu tipo Link sea 'url' y no 'link'
+                userId: user.id
             };
 
             await createLink(linkData);
             handleClose();
-            // En lugar de recargar la página, podrías emitir un evento o usar un callback
-            // para actualizar la lista de links
         } catch (error) {
             console.error('Error al guardar el link:', error);
             // Aquí podrías agregar un toast o notificación de error

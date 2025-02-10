@@ -116,6 +116,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
         RegisterUserDto responseDto = new RegisterUserDto();
         responseDto.setEmail(savedUser.getEmail());
         responseDto.setUsername(savedUser.getUsername());
+        responseDto.setPassword(this.passwordEncoder.encode(registerUserDto.getPassword()));
 
         return responseDto;
     }

@@ -31,16 +31,24 @@ public class LinkController {
     //Obtener todos los enlaces públicos de un usuario.
     @GetMapping("/{username}")
     public ResponseEntity<List<LinkDTO>> findLinksByUsuario(@PathVariable String username){
-       List<LinkDTO> linkList = linkService.findLinksByUsuario(username);
+        List<LinkDTO> linkList = linkService.findLinksByUsuario(username);
         return ResponseEntity.ok(linkList);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    // Todo
+    @PreAuthorize("hasAnyRole('USER')")
+    @GetMapping("/private/{username}")
+    public ResponseEntity<List<LinkDTO>> findLinksPrivate(@PathVariable String username){
+        List<LinkDTO> linkList = linkService.findLinksByUsuario(username);
+        return ResponseEntity.ok(linkList);
+    }
+
+    /*@PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/{id}")
     public Optional<Link> getLinkById(@PathVariable Long id){
         Optional<Link> link = linkService.findById(id);
         return link;
-    }
+    }*/
 
     @GetMapping()
     @PreAuthorize("hasAnyRole('ADMIN')")

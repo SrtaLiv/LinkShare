@@ -40,7 +40,7 @@ public class LinkService implements ILinkService {
     public void update(Link link) {
         linkRepository.save(link);
     }
-    
+
     @Override
     public List<LinkDTO> findLinksByUsuario(String username) {
         List<LinkDTO> links = linkRepository.findByUsuarioUsername(username);
@@ -52,6 +52,5 @@ public class LinkService implements ILinkService {
                 ))
                 .collect(Collectors.toList());
     }
-
 
 }

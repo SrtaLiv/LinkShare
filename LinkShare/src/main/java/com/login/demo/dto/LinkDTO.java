@@ -21,11 +21,6 @@ public class LinkDTO {
         this.platform = platform;
     }
 
-    public LinkDTO(String link, String platform) {
-        this.link = link;
-        this.platform = platform;
-    }
-
     public LinkDTO() {}
 
     public Long getId() {

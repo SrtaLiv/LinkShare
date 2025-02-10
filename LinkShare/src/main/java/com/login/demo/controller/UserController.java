@@ -50,6 +50,7 @@ public class UserController {
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<Map<String, String>> getInfo() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
         UserSec user = userService.findByEmail(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
 

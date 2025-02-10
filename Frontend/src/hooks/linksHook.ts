@@ -31,10 +31,24 @@ export const useDeleteLink = () => {
     });
 };
 
-export const useUpdateLink = (linkId: number) => {
+// export const useUpdateLink = (linkId: number) => {
+//     const queryClient = useQueryClient();
+//     return useMutation({
+//         mutationFn: (linkData: Link) => updateLink(linkId, linkData),
+//         onSuccess: () => {
+//             queryClient.invalidateQueries({ queryKey: ['links'] });
+//             queryClient.invalidateQueries({ queryKey: ['links', linkId] });
+//         },
+//     });
+// };
+
+export const useUpdateLink = (linkId: number | null) => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (linkData: Link) => updateLink(linkId, linkData),
+        mutationFn: (linkData: Link) => {
+            if (!linkId) throw new Error('ID no válido');
+            return updateLink(linkId, linkData);
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['links'] });
             queryClient.invalidateQueries({ queryKey: ['links', linkId] });

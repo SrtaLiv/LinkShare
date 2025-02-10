@@ -7,7 +7,7 @@ import { useGlobalContext } from '../context/GlobalContext';
 
 export const DashboardPage = () => {
     const { user, isAuthenticated } = useGlobalContext();
-
+    console.log(user)
     // Redirect to login if not authenticated
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />;
@@ -49,10 +49,7 @@ export const DashboardPage = () => {
                     
                     <Box className="w-full flex flex-col gap-2 mt-2">
                         <AddLinkBTN />
-                        <LinksByUser 
-                            username={user.username} 
-                            showActions={true} 
-                        />
+                        <LinksByUser username={user.username} showActions={true} />
                     </Box>
                 </Box>
             ) : (

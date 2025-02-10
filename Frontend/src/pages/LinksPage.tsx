@@ -1,75 +1,57 @@
-import React, { useEffect, useState } from "react";
-import api from '../utils/axios';
-import { IconButton, Box } from "@mui/material";
+import React, { useState } from "react";
+import { IconButton, Box, SelectChangeEvent } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { EditLinkModal } from "../components/Links/EditLinkModal";
 import { DeleteLinkModal } from "../components/Links/DeleteLinkModal";
-
-const PLATFORMS = [
-    'Instagram',
-    'Twitter',
-    'LinkedIn',
-    'GitHub',
-    'YouTube',
-    'Facebook',
-    'TikTok',
-    'Personal Website',
-    'Other'
-] as const;
-
-interface LinkData {
-  id: number;
-  platform: string;
-  link: string;
-}
+import { useGlobalContext } from "../context/GlobalContext";
+import { useLinks, useUpdateLink, useDeleteLink } from "../hooks/linksHook";
+import { Link } from "../types/Link";
 
 const LinksByUser = ({ username, showActions = false }) => {
-  const [links, setLinks] = useState<LinkData[]>([]);
+  const { user, isAuthenticated } = useGlobalContext();
+  const { data: links, isLoading, error } = useLinks(user?.username);
+
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [selectedLink, setSelectedLink] = useState<LinkData | null>(null);
-  const [editFormData, setEditFormData] = useState<LinkData>({ platform: '', link: '', id: '' });
+  const [selectedLink, setSelectedLink] = useState<Link | null>(null);
+  const [editFormData, setEditFormData] = useState<Link>({
+    id: null,
+    platform: '', // Aquí el nombre de la plataforma
+    link: '' // Aquí la URL
+  });
 
-  useEffect(() => {
-    fetchLinks();
-  }, [username]);
+  // Inicializar las mutaciones
+  const updateLinkMutation = useUpdateLink(editFormData.id);
+  const deleteLinkMutation = useDeleteLink();
 
-  const fetchLinks = () => {
-    api
-      .get(`/links/user/${username}`)
-      .then((response) => {
-        const linksConId = response.data.map((link: any) => ({
-          ...link,
-          id: link.id || null
-        }));
-        setLinks(linksConId);
-      })
-      .catch((error) => console.error("Error fetching links:", error));
-  };
+  if (!isAuthenticated) return <p>Inicia sesión para ver tus enlaces.</p>;
+  if (isLoading) return <p>Cargando...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
-  const handleEdit = (link: LinkData) => {
-    if (!link) return;
-    setSelectedLink(link);
-    setEditFormData(link);
+  const handleEdit = (link: Link) => {
+    setEditFormData({
+      platform: link.platform,
+      link: link.link,
+      id: link.id,
+    });
     setEditModalOpen(true);
   };
-  
-  const handleDelete = (link: LinkData) => {
-    if (!link) return;
+
+
+  const handleDelete = (link: Link) => {
     setSelectedLink(link);
     setDeleteModalOpen(true);
   };
-  
+
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await api.put(`/links/${editFormData.id}`, {
-        platform: editFormData.platform.toUpperCase(),
-        link: editFormData.link
+      await updateLinkMutation.mutateAsync({
+        ...editFormData,
+        platform: editFormData.platform.toUpperCase()
       });
       setEditModalOpen(false);
-      fetchLinks();
     } catch (error) {
       console.error('Error al actualizar el link:', error);
     }
@@ -79,37 +61,37 @@ const LinksByUser = ({ username, showActions = false }) => {
     if (!selectedLink?.id) return;
 
     try {
-      const response = await api.delete(`/links/${selectedLink.id}`);
-      if (response.status === 204) {
-        setDeleteModalOpen(false);
-        fetchLinks();
-      }
+      await deleteLinkMutation.mutateAsync(selectedLink.id);
+      setDeleteModalOpen(false);
     } catch (error) {
       console.error('Error al eliminar:', error);
     }
   };
-  
-  const handleEditChange = (e: any) => {
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent) => {
     const { name, value } = e.target;
-    setEditFormData(prev => ({
+    setEditFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
   };
+
 
   return (
     <div>
       <ul className="flex flex-col gap-4">
-        {links.map((link, index) => (
-          <li key={index} className="flex items-center gap-2">
+        {links?.map((link: Link) => (
+          <li key={link.id} className="flex items-center gap-2">
             <a
-              href={link.link}
+              href={link.platform} // Aquí va la URL
               target="_blank"
               rel="noopener noreferrer"
               className="py-4 px-6 border border-teal-500 rounded-3xl hover:scale-105 transition-all duration-200 ease cursor-pointer flex-1 text-center text-teal-900 font-bold"
             >
-              {link.platform}
+              {link.link} {/* Aquí va el nombre de la plataforma */}
             </a>
+
+
             {showActions && (
               <Box sx={{ display: 'flex', gap: 1 }}>
                 <IconButton
